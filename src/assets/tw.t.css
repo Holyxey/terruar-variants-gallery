@@ -17,7 +17,16 @@
   --ease-cubic: cubic-bezier(0.3, 1.7, 0.8, 1);
 }
 
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 :host {
+  --tw-scale-x: 1;
   --tw-translate-x: 0;
   --tw-translate-y: 0;
   --tw-translate-z: 0;

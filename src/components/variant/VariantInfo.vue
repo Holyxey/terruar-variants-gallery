@@ -1,16 +1,20 @@
 <template>
-  <div :class="['bg-black space-y-4 not-last:mb-2 p-6 rounded-xl text-white']">
+  <div :class="['bg-black flex gap-4 flex-col p-6 rounded-xl text-white']">
     <!-- Main -->
     <div class="flex gap-2 justify-between">
       <div>
-        <p class="text-xs font-light">Категория: {{ variant.category }}</p>
+        <p class="text-xs lg:text-base font-light">
+          Категория: {{ variant.category }}
+        </p>
 
-        <h4 class="text-xl font-light! font-serif">
+        <h4 class="text-xl lg:text-3xl font-light! font-serif">
           {{ variant.title }}
         </h4>
       </div>
 
-      <div class="bg-black-light rounded-lg py-2 px-4 flex gap-2 items-center">
+      <div
+        class="bg-black-light h-fit rounded-lg py-2 px-4 flex gap-2 items-center"
+      >
         <p class="font-serif font-light text-xl/4">
           {{ variant.capacity }}
         </p>
@@ -18,16 +22,20 @@
       </div>
     </div>
 
-    <ul class="font-serif leading-0 py-2 font-light text-sm space-y-2">
-      <li class="border-b border-black-light flex items-center gap-2 pb-2">
-        <IconSquare class="w-4" />
+    <ul
+      class="font-serif leading-0 py-2 font-light text-sm lg:text-base space-y-2 lg:space-y-4"
+    >
+      <li
+        class="border-b border-black-light flex items-center gap-2 pb-2 lg:pb-4"
+      >
+        <IconSquare class="w-4 lg:w-6" />
 
         <p>Площадь</p>
 
         <p class="ms-auto">{{ variant.sqMeters }}M</p>
       </li>
       <li class="flex items-center gap-2">
-        <IconBed class="w-4" />
+        <IconBed class="w-4 lg:w-6" />
 
         <p>Кровати</p>
 
@@ -36,10 +44,10 @@
     </ul>
 
     <!-- Tags -->
-    <ul class="flex flex-wrap gap-1 select-none">
+    <ul class="flex text-xs lg:text-sm font-light flex-wrap gap-1 select-none">
       <li
         v-for="tag in variant.tags"
-        class="border hover:bg-white/5 transition-colors ease-out flex items-center gap-2 py-2 text-xs whitespace-nowrap px-3 border-black-light rounded-full"
+        class="border hover:bg-white/5 transition-colors ease-out flex items-center gap-2 py-2 whitespace-nowrap px-3 border-black-light rounded-full"
       >
         <template v-if="typeof tag === 'string'">
           <p>{{ tag }}</p>
@@ -58,17 +66,18 @@
     </ul>
 
     <!-- footer -->
-    <ul v-if="variant.footer?.length" class="text-xs">
+    <ul v-if="variant.footer?.length" class="text-xs mt-auto lg:text-sm">
       <li v-for="(value, key) in variant.footer" :key>
         <p>{{ value }}</p>
       </li>
     </ul>
 
-    <button
-      class="bg-warning-dark w-full py-3 leading-5 cursor-pointer rounded-lg font-serif"
+    <a
+      href="#booking"
+      class="bg-warning-dark text-center w-full p-3 leading-5 cursor-pointer rounded-lg font-serif"
     >
       Забронировать
-    </button>
+    </a>
   </div>
 </template>
 

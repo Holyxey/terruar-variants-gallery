@@ -2,7 +2,17 @@ name: terruar-gallery
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        DIR_PUBLIC: './dist/public'
+        API_PATH: 'https://api.terruarhome.ru/gallery'
+        DEV: ${DEV}
+
+    # expose:
+    #   - 3000
+    ports:
+      - 3000:3000
 
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
