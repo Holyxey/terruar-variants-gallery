@@ -25,6 +25,7 @@
   import type { Variant } from '../../assets/variants';
   import GalleryList from './GalleryList.vue';
   import GalleryArrow from './GalleryArrow.vue';
+  import type { ImageObject, ImageGallery, WithContext } from 'schema-dts';
 
   type Prefix = 'hq' | 'sm';
 
@@ -52,6 +53,28 @@
         list.value[prefix.value] = arr;
       }
     }
+
+    buildSchema(list.value[prefix.value]);
+  }
+
+  function buildSchema(list: string[]) {
+    const SCHEMA: WithContext<ImageGallery> = {
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      image: list.map(
+        (img) =>
+          ({
+            '@type': 'ImageObject',
+            url: img,
+            description: `Терруар глэмпинг ${variant.title} категория ${variant.category}`,
+          }) satisfies ImageObject,
+      ),
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.innerHTML = JSON.stringify(SCHEMA);
+    document.appendChild(script);
   }
 
   onMounted(() => {
