@@ -29,8 +29,9 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, useTemplateRef, ref, nextTick } from 'vue';
   import type { Variant } from '../../assets/variants';
+  import type { ImageObject, ImageGallery, WithContext } from 'schema-dts';
 
-  defineProps<{ photos: string[]; variant: Variant }>();
+  const props = defineProps<{ photos: string[]; variant: Variant }>();
   defineExpose({ scrollListTo });
 
   const root = useTemplateRef('galleryRoot');
@@ -78,6 +79,26 @@
     });
   }
 
+  function buildSchema() {
+    const SCHEMA: WithContext<ImageGallery> = {
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      image: props.photos.map(
+        (img) =>
+          ({
+            '@type': 'ImageObject',
+            url: img,
+            description: `Терруар глэмпинг ${props.variant.title} категория ${props.variant.category}`,
+          }) satisfies ImageObject,
+      ),
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.innerHTML = JSON.stringify(SCHEMA);
+    document.appendChild(script);
+  }
+
   onMounted(() => {
     if (!images.value?.length) throw '';
 
@@ -106,6 +127,7 @@
     });
 
     onMouseUp();
+    buildSchema();
   });
 
   onUnmounted(() => {
