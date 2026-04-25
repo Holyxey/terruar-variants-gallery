@@ -8,11 +8,18 @@ const app = defineCustomElement(App, {
 customElements.define('terruar-variants-gallery', app);
 
 function load() {
-  let terruarCalendar = document.querySelector('terruar-variants-gallery');
+  try {
+    let gallery = document.querySelector('terruar-variants-gallery');
 
-  if (!terruarCalendar) {
-    terruarCalendar = document.createElement('terruar-variants-gallery');
-    document.body.appendChild(terruarCalendar);
+    if (!gallery) {
+      const root = document.getElementById('terruar-variants-gallery');
+      gallery = document.createElement('terruar-variants-gallery');
+      root?.appendChild(gallery);
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : '!terruar-variants-gallery';
+    console.error(message + error);
   }
 }
 
