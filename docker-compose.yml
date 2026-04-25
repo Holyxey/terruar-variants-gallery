@@ -9,10 +9,10 @@ services:
         API_PATH: 'https://api.terruarhome.ru/gallery'
         DEV: ${DEV}
 
-    # expose:
-    #   - 3000
-    ports:
-      - 3000:3000
+    expose:
+      - 3000
+    # ports:
+    #   - 3000:3000
 
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
