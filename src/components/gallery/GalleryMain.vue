@@ -74,7 +74,7 @@
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.innerHTML = JSON.stringify(SCHEMA);
-    document.appendChild(script);
+    document.head.appendChild(script);
   }
 
   onMounted(() => {
