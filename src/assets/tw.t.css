@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #7a1438;
+  --color-warning: #da7e59;
+  --color-warning-dark: #b05531;
+  --color-yellow: #d6b224;
+  --color-good: #58be4e;
+  --color-white: #f7f4f3;
+  --color-black: #282217;
+  --color-black-light: #3c3325;
+  --color-black-dark: #221b11;
+
+  --font-sans: 'Manrope', 'Roboto', 'Arial', sans-serif;
+  --font-serif: 'Angst', 'Roboto', 'Arial', sans-serif;
+
+  --ease-cubic: cubic-bezier(0.3, 1.7, 0.8, 1);
+}
+
+:host {
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-translate-z: 0;
+  --tw-rotate-x: rotateX(0);
+  --tw-rotate-y: rotateY(0);
+  --tw-rotate-z: rotateZ(0);
+  --tw-skew-x: skewX(0);
+  --tw-skew-y: skewY(0);
+  --tw-border-style: solid;
+  --tw-gradient-from: #0000;
+  --tw-gradient-via: #0000;
+  --tw-gradient-to: #0000;
+  --tw-gradient-from-position: 0%;
+  --tw-gradient-via-position: 50%;
+  --tw-gradient-to-position: 100%;
+  --tw-shadow: 0 0 #0000;
+  --tw-inset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-inset-ring-shadow: 0 0 #0000;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-outline-style: solid;
+}

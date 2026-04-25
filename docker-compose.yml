@@ -1,0 +1,41 @@
+name: terruar-gallery
+
+services:
+  app:
+    build: .
+
+    environment:
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DIR_PUBLIC: './dist/public'
+      API_PATH: 'https://api.terruarhome.ru/gallery'
+      DEV: ${DEV}
+
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'bun -e "fetch(''http://localhost:3000/gallery'')" || exit 1',
+        ]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    container_name: terruar-gallery-redis
+    image: redis:8-alpine
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          memory: 200M
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
