@@ -7,7 +7,14 @@ const app = defineCustomElement(App, {
 
 customElements.define('terruar-variants-gallery', app);
 
-function load() {}
+function load() {
+  let terruarCalendar = document.querySelector('terruar-variants-gallery');
+
+  if (!terruarCalendar) {
+    terruarCalendar = document.createElement('terruar-variants-gallery');
+    document.body.appendChild(terruarCalendar);
+  }
+}
 
 if (document.readyState === 'complete') {
   load();
