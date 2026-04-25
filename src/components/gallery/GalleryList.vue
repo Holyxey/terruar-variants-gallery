@@ -3,74 +3,60 @@
     ref="galleryRoot"
     :class="[
       'flex overflow-x-auto rounded-lg no-scrollbar space-x-2',
-      isDragging ? 'cursor-grabbing' : 'cursor-grab',
+      'snap-mandatory snap-x',
     ]"
-    @mousedown="onMouseDown"
-    @mousemove="onMouseMove"
-    @mouseup="onMouseUp"
-    @touchend="onMouseUp"
   >
     <img
       v-for="(src, key) in photos"
       ref="images"
       :class="[
-        'block rounded-xl',
+        'block rounded-xl snap-center',
         'transition-all ease-cubic duration-500 delay-75',
-        'select-none pointer-events-none',
+        'pointer-events-none select-none',
       ]"
       :key
-      :loading="key > 2 ? 'lazy' : undefined"
       :src
+      :loading="key > 2 ? 'lazy' : undefined"
       :alt="`Терруар глэмпинг ${variant.title} категория ${variant.category}`"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted, onUnmounted, useTemplateRef, ref, nextTick } from 'vue';
+  import {
+    onMounted,
+    onUnmounted,
+    useTemplateRef,
+    ref,
+    computed,
+    nextTick,
+  } from 'vue';
   import type { Variant } from '../../assets/variants';
 
   const props = defineProps<{ photos: string[]; variant: Variant }>();
-  defineExpose({ scrollListTo });
 
   const root = useTemplateRef('galleryRoot');
   const images = useTemplateRef('images');
   const activeImage = ref<HTMLImageElement>();
+  const hasNext = computed<boolean>(() => {
+    if (!activeImage.value || !images.value) {
+      return false;
+    }
+    return activeImage.value !== images.value[images.value.length - 1];
+  });
+  const hasPrev = computed<boolean>(() => {
+    if (!activeImage.value || !images.value) {
+      return false;
+    }
+    return activeImage.value !== images.value[0];
+  });
 
-  const isDragging = ref(false);
-  let startX = 0;
-  let scrollLeftStart = 0;
+  defineExpose({ scrollListTo, hasNext, hasPrev });
 
   let observer: IntersectionObserver;
-  function onMouseDown(event: MouseEvent) {
-    if (!root.value) return;
-    isDragging.value = true;
-    startX = event.pageX - root.value.offsetLeft;
-    scrollLeftStart = root.value.scrollLeft;
-  }
-
-  function onMouseMove(event: MouseEvent) {
-    if (!isDragging.value || !root.value) return;
-
-    event.preventDefault();
-
-    const x = event.pageX - root.value.offsetLeft;
-    const walk = (x - startX) * 1.4;
-    root.value.scrollLeft = scrollLeftStart - walk;
-  }
-
-  function onMouseUp() {
-    isDragging.value = false;
-    if (activeImage.value)
-      activeImage.value.scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center',
-      });
-  }
 
   function scrollListTo(dir: 'next' | 'prev') {
     if (!root.value) return;
-    root.value.addEventListener('scrollend', onMouseUp, { once: true });
 
     root.value.scrollBy({
       left: (images.value?.[0]?.clientWidth || 100) * (dir === 'next' ? 1 : -1),
@@ -105,7 +91,9 @@
       });
     });
 
-    onMouseUp();
+    images.value?.[0]?.addEventListener('load', () => {
+      activeImage.value = images.value?.[0];
+    });
   });
 
   onUnmounted(() => {

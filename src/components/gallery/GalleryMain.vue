@@ -3,11 +3,13 @@
     <GalleryArrow
       aria-label="prev photo"
       dir="left"
+      :hide="!galleryList?.hasPrev"
       @click="galleryList?.scrollListTo('prev')"
     />
     <GalleryArrow
       aria-label="next photo"
       dir="right"
+      :hide="!galleryList?.hasNext"
       @click="galleryList?.scrollListTo('next')"
     />
 

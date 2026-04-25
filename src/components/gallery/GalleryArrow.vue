@@ -1,14 +1,21 @@
 <template>
   <button
+    ref="btn"
     tabindex="0"
     :class="[
-      'w-10 bg-black-dark flex fill-white rounded-3xl rounded-s-none p-2',
+      'group transition-all ease-cubic duration-500',
+      'w-10 bg-black-dark flex fill-white rounded-3xl p-2 shadow-black-dark',
       'absolute z-10 top-1/2 -translate-y-1/2 cursor-pointer',
-      dir === 'left' ? '-left-1' : '-right-1 -scale-100 ',
+      'active:scale-110',
+      dir === 'left' ? 'left-1' : 'right-1 ',
+
+      hide && 'opacity-0 pointer-events-none',
+      hide ? (dir === 'left' ? '-left-2' : '-right-2') : undefined,
     ]"
   >
     <svg
-      class="pointer-events-none"
+      ref="icon"
+      :class="['pointer-events-none ', dir === 'left' ? '' : 'rotate-180']"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
@@ -19,5 +26,5 @@
   </button>
 </template>
 <script setup lang="ts">
-  defineProps<{ dir: 'left' | 'right' }>();
+  defineProps<{ dir: 'left' | 'right'; hide?: boolean }>();
 </script>

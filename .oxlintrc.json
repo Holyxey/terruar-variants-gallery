@@ -5,11 +5,12 @@
     "correctness": "error"
   },
   "rules": {
+    "vue/require-typed-ref": "error",
+    "vue/define-props-declaration": "error",
+    "import/no-empty-named-blocks": "error",
     "typescript/consistent-type-assertions": [
       "error",
-      {
-        "assertionStyle": "never"
-      }
+      { "assertionStyle": "never" }
     ]
   }
 }
