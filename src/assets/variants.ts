@@ -1,4 +1,4 @@
-import { slugify } from 'transliteration';
+import { slugify } from '../utils/slugify';
 
 // Strongly typed category enum for better IntelliSense
 export enum Category {
@@ -344,9 +344,3 @@ export const variants: Variant[] = [
   ...variantsStandard,
   ...variantsTent,
 ];
-
-let cmd = `cd src/assets/photos && mkdir -p `;
-variants.map((v) => {
-  cmd = cmd + ` ${v.title}`;
-});
-console.log(cmd);
