@@ -144,6 +144,19 @@
   }
   function bubbleBook() {
     document.getElementById('bubbleBook')?.click();
+
+    const form: HTMLFormElement | null = document.querySelector(
+      '[data-book-form] form',
+    );
+
+    if (!form) return;
+
+    const formVariantName = document.createElement('input');
+    formVariantName.name = 'Название домика';
+    formVariantName.value = variant.title;
+    formVariantName.hidden = true;
+
+    form.appendChild(formVariantName);
   }
 
   buildSchema();
