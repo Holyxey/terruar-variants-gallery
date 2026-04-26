@@ -101,9 +101,14 @@ const app = new Elysia({ prefix: '/gallery' })
     },
   )
 
-  .get('/*', async ({ params, status }) => {
+  .get('/*', async ({ set, headers, params, status }) => {
     const path = params['*'];
     const file = Bun.file(import.meta.dir + `/./public/${path}`);
+
+    // ===== ETAG
+    set.headers['etag'] = eTag;
+    if (headers['if-none-match'] === eTag) return status('Not Modified');
+    // ===== ETAG
 
     if (await file.exists()) {
       return status(200, file);
