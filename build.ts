@@ -66,7 +66,10 @@ async function buildServer() {
   await Bun.build({
     entrypoints: ['./server'],
     outdir: './dist',
-    minify: true,
+    minify: {
+      whitespace: true,
+      syntax: true,
+    },
     banner: '// yurin.dev\n',
     define: { 'process.env.ETAG': ETAG },
     sourcemap: true,
