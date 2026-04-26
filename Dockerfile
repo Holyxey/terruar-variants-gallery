@@ -1,4 +1,4 @@
-FROM oven/bun:1.3-slim AS builder
+FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ ARG DEV
 RUN bun run lint
 RUN bun run build:app
 
-FROM oven/bun:1.3-slim
+FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim
 
 WORKDIR /app
 
