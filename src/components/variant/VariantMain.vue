@@ -1,9 +1,6 @@
 <template>
   <article
-    :class="[
-      'max-w-7xl mx-auto bg-black p-4 rounded-3xl',
-      'flex flex-col gap-4 md:flex-row ',
-    ]"
+    :class="[' bg-black p-4 rounded-3xl', 'flex flex-col gap-4 md:flex-row ']"
   >
     <VariantInfo :variant :class="['flex-1']" />
     <GalleryMain :variant :class="['flex-1']" />

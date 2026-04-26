@@ -41,7 +41,6 @@ services:
     networks:
       - terruar
 
-
   redis:
     container_name: terruar-gallery-redis
     image: redis:8-alpine

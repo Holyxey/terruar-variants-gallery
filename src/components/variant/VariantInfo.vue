@@ -79,12 +79,11 @@
       </ul>
     </div>
 
-    <a
-      href="#booking"
+    <UiButton is="a" href="#booking"> Забронировать </UiButton>
+    <!-- <a
       class="bg-warning-dark sticky bottom-2 text-center w-full p-3 leading-5 cursor-pointer rounded-lg font-serif"
     >
-      Забронировать
-    </a>
+    </a> -->
   </div>
 </template>
 
@@ -99,6 +98,7 @@
     LocationFeatureSpecificationLeaf,
   } from 'schema-dts';
   import { onMounted } from 'vue';
+  import UiButton from '../ui/UiButton.vue';
 
   const { variant } = defineProps<{ variant: Variant }>();
 
