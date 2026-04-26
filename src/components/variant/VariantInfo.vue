@@ -151,12 +151,16 @@
 
     if (!form) return;
 
-    const formVariantName = document.createElement('input');
+    const existedInput: null | HTMLInputElement = form.querySelector(
+      '[name="Название домика"]',
+    );
+
+    const formVariantName = existedInput || document.createElement('input');
     formVariantName.name = 'Название домика';
     formVariantName.value = variant.title;
     formVariantName.hidden = true;
 
-    form.appendChild(formVariantName);
+    if (!existedInput) form.appendChild(formVariantName);
   }
 
   buildSchema();
