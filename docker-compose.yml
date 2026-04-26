@@ -1,4 +1,6 @@
 name: terruar-gallery
+networks:
+  terruar:
 
 services:
   app:
@@ -9,6 +11,7 @@ services:
         API_PATH: 'https://api.terruarhome.ru/gallery'
         DEV: ${DEV}
 
+    restart: 'unless-stopped'
     expose:
       - 3000
     # ports:
@@ -35,6 +38,10 @@ services:
       redis:
         condition: service_healthy
 
+    networks:
+      - terruar
+
+
   redis:
     container_name: terruar-gallery-redis
     image: redis:8-alpine
@@ -49,3 +56,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+    networks:
+      - terruar

@@ -64,7 +64,9 @@ async function buildServer() {
   await Bun.build({
     entrypoints: ['./server'],
     outdir: './dist',
+    minify: true,
+    banner: '// yurin.dev\n',
+    sourcemap: true,
   });
 }
-
 await buildServer();

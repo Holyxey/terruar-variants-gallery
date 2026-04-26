@@ -1,5 +1,6 @@
 import Elysia, { t } from 'elysia';
 import cors from '@elysiajs/cors';
+import { RedisCache } from './src/utils/redisCache';
 
 const PATH = process.env.DEV
   ? 'http://localhost:3000/gallery'
@@ -16,22 +17,27 @@ const app = new Elysia({ prefix: '/gallery' })
         import.meta.dir + '/./terruar-variants-gallery.iife.js',
       );
       const canBeGzip = headers['accept-encoding']?.includes('gzip');
+      const cacheInstance = new RedisCache(
+        'gallerySlug',
+        'vue',
+        t.Object({ plain: t.String() }),
+      );
 
       set.headers['content-type'] = file.type;
 
-      const cache = await Bun.redis.get('vue');
+      const cache = await cacheInstance.get();
 
       if (canBeGzip) {
         set.headers['content-encoding'] = 'gzip';
       }
 
-      if (cache) {
-        if (canBeGzip) return status(200, Bun.gzipSync(cache));
+      if (cache.value) {
+        if (canBeGzip) return status(200, Bun.gzipSync(cache.value.plain));
         return status(200, cache);
       }
 
       const plain = await file.text();
-      await Bun.redis.setex('vue', 60 * 60, plain);
+      await cacheInstance.set({ plain });
 
       if (canBeGzip) return status(200, Bun.gzipSync(plain));
       return status(200, plain);
@@ -44,10 +50,19 @@ const app = new Elysia({ prefix: '/gallery' })
   .get(
     '/list/:slug',
     async ({ status, params: { slug }, query }) => {
+      const cacheKey = slug + query.size;
+      const cacheInstance = new RedisCache(
+        'gallerySlug',
+        cacheKey,
+        t.Object({ arr: t.Array(t.String()) }),
+      );
+      const cache = await cacheInstance.get();
+      if (cache.value) return status(200, cache.value.arr);
+
       const list = new Bun.Glob(
         `${process.env.DIR_PUBLIC}/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
       );
-      const arr = [];
+      const arr: string[] = [];
 
       for await (const filePath of list.scan('.')) {
         arr.push(
@@ -58,6 +73,8 @@ const app = new Elysia({ prefix: '/gallery' })
 
       if (!arr.length) return status('Not Found');
 
+      const sorted = arr.sort((a, b) => a.localeCompare(b));
+      await cacheInstance.set({ arr: sorted });
       return status(200, arr);
     },
     {
