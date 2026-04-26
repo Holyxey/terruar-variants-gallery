@@ -2,6 +2,8 @@ import sharp from 'sharp';
 import { variants, type Variant } from './src/assets/variants';
 import { slugify } from 'transliteration';
 
+const ETAG = JSON.stringify(Math.random().toString(36).substring(3));
+
 async function prepareGalleries(variant: Variant) {
   const photos = new Bun.Glob(`./src/assets/photos/${variant.title}/*`);
   const outDir = `${process.env.DIR_PUBLIC}/${variant.slug}`;
@@ -42,8 +44,6 @@ async function prepareGalleries(variant: Variant) {
       console.log(smPath);
 
       galleryFiles.push(hqPath, smPath);
-
-      console.log('✅ ' + variant.title);
     } catch (error) {
       const message =
         error instanceof Error
@@ -54,6 +54,8 @@ async function prepareGalleries(variant: Variant) {
       id++;
     }
   }
+
+  console.log('✅ ' + variant.title);
   if (id === 0) {
     throw `Gallery is empty for ${variant.title}`;
   }
@@ -66,7 +68,10 @@ async function buildServer() {
     outdir: './dist',
     minify: true,
     banner: '// yurin.dev\n',
+    define: { 'process.env.ETAG': ETAG },
     sourcemap: true,
   });
+
+  console.log(`✅ Server built with etag: ${ETAG}`);
 }
 await buildServer();

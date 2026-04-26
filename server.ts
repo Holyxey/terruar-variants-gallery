@@ -2,9 +2,13 @@ import Elysia, { t } from 'elysia';
 import cors from '@elysiajs/cors';
 import { RedisCache } from './src/utils/redisCache';
 
+const eTag = process.env.ETAG;
+
 const PATH = process.env.DEV
   ? 'http://localhost:3000/gallery'
   : process.env.API_PATH;
+
+if (!eTag) throw '!eTag';
 
 const app = new Elysia({ prefix: '/gallery' })
 
@@ -16,10 +20,16 @@ const app = new Elysia({ prefix: '/gallery' })
       const file = Bun.file(
         import.meta.dir + '/./terruar-variants-gallery.iife.js',
       );
+
+      // ===== ETAG
+      set.headers['etag'] = eTag;
+      if (headers['if-none-match'] === eTag) return status('Not Modified');
+      // ===== ETAG
+
       const canBeGzip = headers['accept-encoding']?.includes('gzip');
       const cacheInstance = new RedisCache(
         'gallerySlug',
-        'vue',
+        'vue' + eTag,
         t.Object({ plain: t.String() }),
       );
 
@@ -49,8 +59,8 @@ const app = new Elysia({ prefix: '/gallery' })
 
   .get(
     '/list/:slug',
-    async ({ status, params: { slug }, query }) => {
-      const cacheKey = slug + query.size;
+    async ({ status, set, headers, params: { slug }, query }) => {
+      const cacheKey = slug + query.size + eTag;
       const cacheInstance = new RedisCache(
         'gallerySlug',
         cacheKey,
@@ -58,6 +68,11 @@ const app = new Elysia({ prefix: '/gallery' })
       );
       const cache = await cacheInstance.get();
       if (cache.value) return status(200, cache.value.arr);
+
+      // ===== ETAG
+      set.headers['etag'] = eTag;
+      if (headers['if-none-match'] === eTag) return status('Not Modified');
+      // ===== ETAG
 
       const list = new Bun.Glob(
         `${process.env.DIR_PUBLIC}/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
