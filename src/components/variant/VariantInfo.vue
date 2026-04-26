@@ -79,11 +79,7 @@
       </ul>
     </div>
 
-    <UiButton is="a" href="#booking"> Забронировать </UiButton>
-    <!-- <a
-      class="bg-warning-dark sticky bottom-2 text-center w-full p-3 leading-5 cursor-pointer rounded-lg font-serif"
-    >
-    </a> -->
+    <UiButton is="button" @click="bubbleBook"> Забронировать </UiButton>
   </div>
 </template>
 
@@ -97,7 +93,6 @@
     WithContext,
     LocationFeatureSpecificationLeaf,
   } from 'schema-dts';
-  import { onMounted } from 'vue';
   import UiButton from '../ui/UiButton.vue';
 
   const { variant } = defineProps<{ variant: Variant }>();
@@ -146,6 +141,9 @@
           : `Can't build schema for ${variant.title}`;
       console.error(message + error);
     }
+  }
+  function bubbleBook() {
+    document.getElementById('bubbleBook')?.click();
   }
 
   buildSchema();
