@@ -21,8 +21,10 @@ const app = new Elysia({ prefix: '/gallery' })
         import.meta.dir + '/./terruar-variants-gallery.iife.js',
       );
 
-      // ===== ETAG
+      // ===== ETAG & Cache Headers
       set.headers['etag'] = eTag;
+      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
+      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
       if (headers['if-none-match'] === eTag) return status('Not Modified');
       // ===== ETAG
 
@@ -69,8 +71,10 @@ const app = new Elysia({ prefix: '/gallery' })
       const cache = await cacheInstance.get();
       if (cache.value) return status(200, cache.value.arr);
 
-      // ===== ETAG
+      // ===== ETAG & Cache Headers
       set.headers['etag'] = eTag;
+      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
+      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
       if (headers['if-none-match'] === eTag) return status('Not Modified');
       // ===== ETAG
 
@@ -105,8 +109,10 @@ const app = new Elysia({ prefix: '/gallery' })
     const path = params['*'];
     const file = Bun.file(import.meta.dir + `/./public/${path}`);
 
-    // ===== ETAG
+    // ===== ETAG & Cache Headers
     set.headers['etag'] = eTag;
+    set.headers['cache-control'] = 'public, max-age=31536000, immutable';
+    set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
     if (headers['if-none-match'] === eTag) return status('Not Modified');
     // ===== ETAG
 
