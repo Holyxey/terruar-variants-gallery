@@ -2,7 +2,8 @@
   <div
     ref="galleryRoot"
     :class="[
-      'flex overflow-x-auto rounded-lg no-scrollbar space-x-2',
+      'min-h-full',
+      'flex overflow-x-auto rounded-2xl no-scrollbar space-x-2',
       'snap-mandatory snap-x',
     ]"
   >
@@ -10,7 +11,8 @@
       v-for="(src, key) in photos"
       ref="images"
       :class="[
-        'block rounded-xl snap-center',
+        'aspect-video min-h-full',
+        'block rounded-2xl object-cover  snap-center',
         'transition-all ease-cubic duration-500 delay-75',
         'pointer-events-none select-none',
       ]"

@@ -1,5 +1,9 @@
 <template>
-  <VariantMain v-for="variant in variants" :variant :key="variant.title" />
+  <ul class="space-y-8">
+    <li v-for="variant in variants">
+      <VariantMain :variant :key="variant.title" />
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">

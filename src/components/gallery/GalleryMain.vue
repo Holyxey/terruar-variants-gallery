@@ -1,5 +1,9 @@
 <template>
-  <div class="relative">
+  <div
+    class="relative"
+    @mousemove="fullScreen!.hidden = false"
+    @mouseleave="fullScreen!.hidden = true"
+  >
     <GalleryArrow
       aria-label="prev photo"
       dir="left"
@@ -19,6 +23,12 @@
       :photos="sizedList"
       :variant
     />
+
+    <GalleryFullScreen
+      hidden
+      ref="fullScreen"
+      @click="isFullScreen = !isFullScreen"
+    />
   </div>
 </template>
 
@@ -28,6 +38,7 @@
   import GalleryList from './GalleryList.vue';
   import GalleryArrow from './GalleryArrow.vue';
   import type { ImageObject, ImageGallery, WithContext } from 'schema-dts';
+  import GalleryFullScreen from './GalleryFullScreen.vue';
 
   type Prefix = 'hq' | 'sm';
 
@@ -36,8 +47,10 @@
   const list = ref<Record<Prefix, string[]>>({ hq: [], sm: [] });
   const prefix = ref<Prefix>(window.innerWidth > 460 ? 'hq' : 'sm');
   const sizedList = computed<string[]>(() => list.value[prefix.value]);
+  const isFullScreen = ref(false);
 
   const galleryList = useTemplateRef('galleryList');
+  const fullScreen = useTemplateRef('fullScreen');
 
   async function getImages() {
     prefix.value = window?.innerWidth > 460 ? 'hq' : 'sm';

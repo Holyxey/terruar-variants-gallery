@@ -1,7 +1,11 @@
 <template>
-  <div :class="['bg-black flex gap-4 flex-col p-6 rounded-xl text-white']">
+  <div
+    :class="[
+      'bg-black relative flex gap-4 flex-col lg:p-2 rounded-2xl text-white',
+    ]"
+  >
     <!-- Main -->
-    <div class="flex gap-2 justify-between">
+    <div class="flex sticky top-0 bg-black p-2 -m-2 gap-2 justify-between">
       <div>
         <p class="text-xs lg:text-base font-light">
           Категория: {{ variant.category }}
@@ -56,6 +60,7 @@
         <template v-else>
           <div v-if="tag.iconLink">
             <img
+              class="w-3 h-3"
               :src="tag.iconLink"
               :alt="`Terruar Icon ${variant.title} ${tag.title}`"
             />
@@ -66,15 +71,17 @@
     </ul>
 
     <!-- footer -->
-    <ul v-if="variant.footer?.length" class="text-xs mt-auto lg:text-sm">
-      <li v-for="(value, key) in variant.footer" :key>
-        <p>{{ value }}</p>
-      </li>
-    </ul>
+    <div class="mt-auto flex flex-col gap-4">
+      <ul v-if="variant.footer?.length" class="text-xs mt-auto lg:text-sm">
+        <li v-for="(value, key) in variant.footer" :key>
+          <p>{{ value }}</p>
+        </li>
+      </ul>
+    </div>
 
     <a
       href="#booking"
-      class="bg-warning-dark text-center w-full p-3 leading-5 cursor-pointer rounded-lg font-serif"
+      class="bg-warning-dark sticky bottom-2 text-center w-full p-3 leading-5 cursor-pointer rounded-lg font-serif"
     >
       Забронировать
     </a>

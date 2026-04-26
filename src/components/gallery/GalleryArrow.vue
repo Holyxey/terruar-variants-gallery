@@ -4,23 +4,29 @@
     tabindex="0"
     :class="[
       'group transition-all ease-cubic duration-500',
-      'w-10 bg-black-dark flex fill-white rounded-3xl p-2 shadow-black-dark',
+      ' bg-black flex fill-white stroke-white rounded-3xl p-2 shadow-black-dark',
       'absolute z-10 top-1/2 -translate-y-1/2 cursor-pointer',
-      'active:scale-110',
-      dir === 'left' ? 'left-1' : 'right-1 ',
+
+      dir === 'left'
+        ? 'left-0 pl-0 rounded-l-none'
+        : 'right-0 pr-0 rounded-r-none',
 
       hide && 'opacity-0 pointer-events-none',
       hide ? (dir === 'left' ? '-left-2' : '-right-2') : undefined,
     ]"
   >
     <svg
-      ref="icon"
-      :class="['pointer-events-none ', dir === 'left' ? '' : 'rotate-180']"
+      class="w-5"
       xmlns="http://www.w3.org/2000/svg"
+      :class="['pointer-events-none ', dir === 'left' ? '' : 'rotate-180']"
       viewBox="0 0 24 24"
     >
       <path
-        d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.5.5 0 0 1 0-.74"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1.5"
+        d="m15 5l-6 7l6 7"
       />
     </svg>
   </button>
