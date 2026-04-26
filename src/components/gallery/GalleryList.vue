@@ -3,7 +3,7 @@
     ref="galleryRoot"
     :class="[
       'min-h-full',
-      'flex overflow-x-auto rounded-2xl no-scrollbar space-x-2',
+      'flex overflow-x-auto rounded-2xl no-scrollbar',
       'snap-mandatory snap-x',
     ]"
   >
@@ -75,9 +75,9 @@
           if (el.isIntersecting && el.target instanceof HTMLImageElement) {
             activeImage.value = el.target;
 
-            el.target.classList.remove('opacity-50');
+            el.target.classList.remove('opacity-50', 'scale-x-90');
           } else {
-            el.target.classList.add('opacity-50');
+            el.target.classList.add('opacity-50', 'scale-x-90');
           }
         });
       },
