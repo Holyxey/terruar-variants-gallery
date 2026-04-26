@@ -16,7 +16,7 @@
         'transition-all ease-cubic duration-500 delay-75',
         'pointer-events-none select-none',
       ]"
-      :key
+      :key="src"
       :src
       :loading="key > 2 ? 'lazy' : undefined"
       :alt="`Терруар глэмпинг ${variant.title} категория ${variant.category}`"
@@ -75,9 +75,9 @@
           if (el.isIntersecting && el.target instanceof HTMLImageElement) {
             activeImage.value = el.target;
 
-            el.target.classList.remove('opacity-50', 'scale-x-90');
+            el.target.classList.remove('opacity-0');
           } else {
-            el.target.classList.add('opacity-50', 'scale-x-90');
+            el.target.classList.add('opacity-0');
           }
         });
       },
