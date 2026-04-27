@@ -1,9 +1,9 @@
 <template>
   <div
     :class="[
-      'absolute bg-black rounded-xl stroke-white z-10 p-2 cursor-pointer',
-      'transition-all ease-cubic duration-500 delay-200',
-      hidden ? 'opacity-0 scale-50 bottom-0 right-0' : 'bottom-2 right-2',
+      'absolute z-10 cursor-pointer rounded-xl bg-black stroke-white p-2',
+      'ease-cubic transition-all delay-200 duration-500',
+      hidden ? 'right-0 bottom-0 scale-50 opacity-0' : 'right-2 bottom-2',
     ]"
   >
     <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

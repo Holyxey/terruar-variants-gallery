@@ -2,8 +2,8 @@
   <component
     :is
     :class="[
-      'text-white block border border-warning-dark',
-      'sticky bottom-2 text-center py-3 px-5 leading-5 font-serif',
+      'border-warning-dark block border text-white',
+      'sticky bottom-2 px-5 py-3 text-center font-serif leading-5',
       'cursor-pointer transition-all duration-300',
 
       variant === 'action' ? 'rounded-lg' : 'rounded-full',

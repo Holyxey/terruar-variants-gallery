@@ -3,8 +3,8 @@
     ref="galleryRoot"
     :class="[
       'min-h-full',
-      'flex overflow-x-auto rounded-2xl no-scrollbar',
-      'snap-mandatory snap-x',
+      'no-scrollbar flex overflow-x-auto rounded-2xl',
+      'snap-x snap-mandatory',
     ]"
   >
     <img
@@ -12,8 +12,8 @@
       ref="images"
       :class="[
         'aspect-video min-h-full',
-        'block rounded-2xl object-cover  snap-center',
-        'transition-all ease-cubic duration-500 delay-75',
+        'block snap-center rounded-2xl object-cover',
+        'ease-cubic transition-all delay-75 duration-500',
         'pointer-events-none select-none',
       ]"
       :key="src"

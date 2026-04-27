@@ -3,22 +3,22 @@
     ref="btn"
     tabindex="0"
     :class="[
-      'group transition-all ease-cubic duration-500',
-      ' bg-black flex fill-white stroke-white rounded-3xl p-2 shadow-black-dark',
-      'absolute z-10 top-1/2 -translate-y-1/2 cursor-pointer',
+      'group ease-cubic transition-all duration-500',
+      'shadow-black-dark flex rounded-3xl bg-black fill-white stroke-white p-2',
+      'absolute top-1/2 z-10 -translate-y-1/2 cursor-pointer',
 
       dir === 'left'
-        ? 'left-0 pl-0 rounded-l-none'
-        : 'right-0 pr-0 rounded-r-none',
+        ? 'left-0 rounded-l-none pl-0'
+        : 'right-0 rounded-r-none pr-0',
 
-      hide && 'opacity-0 pointer-events-none',
+      hide && 'pointer-events-none opacity-0',
       hide ? (dir === 'left' ? '-left-2' : '-right-2') : undefined,
     ]"
   >
     <svg
       class="w-5"
       xmlns="http://www.w3.org/2000/svg"
-      :class="['pointer-events-none ', dir === 'left' ? '' : 'rotate-180']"
+      :class="['pointer-events-none', dir === 'left' ? '' : 'rotate-180']"
       viewBox="0 0 24 24"
     >
       <path

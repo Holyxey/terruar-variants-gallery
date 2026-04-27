@@ -1,6 +1,6 @@
 <template>
   <article
-    :class="[' bg-black p-4 rounded-3xl', 'flex flex-col gap-4 md:flex-row ']"
+    :class="['rounded-3xl bg-black p-4', 'flex flex-col gap-4 md:flex-row']"
   >
     <VariantInfo :variant :class="['flex-1']" />
     <GalleryMain :variant :class="['flex-1']" />

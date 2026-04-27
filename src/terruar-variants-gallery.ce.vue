@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto">
-    <div class="flex gap-2 flex-wrap pb-6 px-4">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap gap-2 px-4 pb-6">
       <UiButton
         v-for="[name, variants] in Object.entries(categories)"
         is="button"

@@ -107,18 +107,26 @@ const app = new Elysia({ prefix: '/gallery' })
 
   .get('/*', async ({ set, headers, params, status }) => {
     const path = params['*'];
-    const file = Bun.file(import.meta.dir + `/./public/${path}`);
 
-    // ===== ETAG & Cache Headers
-    set.headers['etag'] = eTag;
-    set.headers['cache-control'] = 'public, max-age=31536000, immutable';
-    set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
-    if (headers['if-none-match'] === eTag) return status('Not Modified');
-    // ===== ETAG
+    try {
+      const file = Bun.file(import.meta.dir + `/./public/${path}`);
 
-    if (await file.exists()) {
-      return status(200, file);
-    } else return status('Not Found', 'Image is not found');
+      // ===== ETAG & Cache Headers
+      set.headers['etag'] = eTag;
+      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
+      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
+      if (headers['if-none-match'] === eTag) return status('Not Modified');
+      // ===== ETAG
+
+      if (await file.exists()) {
+        return status(200, file);
+      } else return status('Not Found', 'Image is not found');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '!';
+      console.error(message + error);
+
+      return status('Internal Server Error');
+    }
   });
 
 app.listen(3000);

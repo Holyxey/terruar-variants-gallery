@@ -1,36 +1,36 @@
 <template>
   <div
     :class="[
-      'bg-black relative flex gap-4 flex-col lg:p-2 rounded-2xl text-white',
+      'relative flex flex-col gap-4 rounded-2xl bg-black text-white lg:p-2',
     ]"
   >
     <!-- Main -->
-    <div class="flex sticky top-0 bg-black p-2 -m-2 gap-2 justify-between">
+    <div class="sticky top-0 -m-2 flex justify-between gap-2 bg-black p-2">
       <div>
-        <p class="text-xs lg:text-base font-light">
+        <p class="text-xs font-light lg:text-base">
           Категория: {{ variant.category }}
         </p>
 
-        <h4 class="text-xl lg:text-3xl font-light! font-serif">
+        <h4 class="font-serif text-xl font-light! lg:text-3xl">
           {{ variant.title }}
         </h4>
       </div>
 
       <div
-        class="bg-black-light h-fit rounded-lg py-2 px-4 flex gap-2 items-center"
+        class="bg-black-light flex h-fit items-center gap-2 rounded-lg px-4 py-2"
       >
-        <p class="font-serif font-light text-xl/4">
+        <p class="font-serif text-xl/4 font-light">
           {{ variant.capacity }}
         </p>
-        <IconPerson class="h-6 -me-2" />
+        <IconPerson class="-me-2 h-6" />
       </div>
     </div>
 
     <ul
-      class="font-serif leading-0 py-2 font-light text-sm lg:text-base space-y-2 lg:space-y-4"
+      class="space-y-2 py-2 font-serif text-sm leading-0 font-light lg:space-y-4 lg:text-base"
     >
       <li
-        class="border-b border-black-light flex items-center gap-2 pb-2 lg:pb-4"
+        class="border-black-light flex items-center gap-2 border-b pb-2 lg:pb-4"
       >
         <IconSquare class="w-4 lg:w-6" />
 
@@ -48,10 +48,10 @@
     </ul>
 
     <!-- Tags -->
-    <ul class="flex text-xs lg:text-sm font-light flex-wrap gap-1 select-none">
+    <ul class="flex flex-wrap gap-1 text-xs font-light select-none lg:text-sm">
       <li
         v-for="tag in variant.tags"
-        class="border hover:bg-white/5 transition-colors ease-out flex items-center gap-2 py-2 whitespace-nowrap px-3 border-black-light rounded-full"
+        class="border-black-light flex items-center gap-2 rounded-full border px-3 py-2 whitespace-nowrap transition-colors ease-out hover:bg-white/5"
       >
         <template v-if="typeof tag === 'string'">
           <p>{{ tag }}</p>
@@ -60,7 +60,7 @@
         <template v-else>
           <div v-if="tag.iconLink">
             <img
-              class="w-3 h-3"
+              class="h-3 w-3"
               :src="tag.iconLink"
               :alt="`Terruar Icon ${variant.title} ${tag.title}`"
             />
@@ -72,7 +72,7 @@
 
     <!-- footer -->
     <div class="mt-auto flex flex-col gap-4">
-      <ul v-if="variant.footer?.length" class="text-xs mt-auto lg:text-sm">
+      <ul v-if="variant.footer?.length" class="mt-auto text-xs lg:text-sm">
         <li v-for="(value, key) in variant.footer" :key>
           <p>{{ value }}</p>
         </li>
