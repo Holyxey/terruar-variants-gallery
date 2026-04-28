@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="photos.length"
     ref="galleryRoot"
     :class="[
       'min-h-full',
@@ -11,14 +12,14 @@
       v-for="(src, key) in photos"
       ref="images"
       :class="[
-        'aspect-video min-h-full',
+        'aspect-4/3 min-h-full md:aspect-video',
         'block snap-center rounded-2xl object-cover',
         'ease-cubic transition-all delay-75 duration-500',
         'pointer-events-none select-none',
       ]"
       :key="src"
       :src
-      :loading="key > 2 ? 'lazy' : undefined"
+      :loading="key > 1 ? 'lazy' : undefined"
       :alt="`Терруар глэмпинг ${variant.title} категория ${variant.category}`"
     />
   </div>

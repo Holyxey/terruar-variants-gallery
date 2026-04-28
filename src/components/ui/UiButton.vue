@@ -2,14 +2,13 @@
   <component
     :is
     :class="[
-      'border-warning-dark block border text-white',
+      'block text-white',
       'sticky bottom-2 px-5 py-3 text-center font-serif leading-5',
       'cursor-pointer transition-all duration-300',
 
       variant === 'action' ? 'rounded-lg' : 'rounded-full',
-      option === 'filled' ? 'bg-warning-dark' : 'hover:bg-warning-dark/50',
-    ]"
-  >
+      option === 'filled' ? 'bg-warning-dark' : 'bg-black',
+    ]">
     <slot />
   </component>
 </template>
