@@ -21,10 +21,6 @@ function load() {
       error instanceof Error ? error.message : '!terruar-variants-gallery';
     console.error(message + error);
   }
-
-  const style = document.createElement('style');
-  style.innerHTML = '.t-records { overflow: unset; }';
-  document.head.appendChild(style);
 }
 
 if (document.readyState === 'complete') {

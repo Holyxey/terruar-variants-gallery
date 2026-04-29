@@ -8,7 +8,8 @@
 
       variant === 'action' ? 'rounded-lg' : 'rounded-full',
       option === 'filled' ? 'bg-warning-dark' : 'bg-black',
-    ]">
+    ]"
+  >
     <slot />
   </component>
 </template>

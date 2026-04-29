@@ -11,8 +11,10 @@
     <img
       v-for="(src, key) in photos"
       ref="images"
+      @error="hideOnError"
       :class="[
-        'aspect-4/3 min-h-full md:aspect-video',
+        'bg-black-dark aspect-4/3 md:aspect-video',
+        'min-h-full max-w-full min-w-full',
         'block snap-center rounded-2xl object-cover',
         'ease-cubic transition-all delay-75 duration-500',
         'pointer-events-none select-none',
@@ -26,14 +28,7 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    onMounted,
-    onUnmounted,
-    useTemplateRef,
-    ref,
-    computed,
-    nextTick,
-  } from 'vue';
+  import { onMounted, onUnmounted, useTemplateRef, ref, computed } from 'vue';
   import type { Variant } from '../../assets/variants';
 
   const props = defineProps<{ photos: string[]; variant: Variant }>();
@@ -53,6 +48,13 @@
     }
     return activeImage.value !== images.value[0];
   });
+
+  function hideOnError(e: Event) {
+    if (e.target instanceof HTMLImageElement) {
+      e.target.hidden = true;
+    }
+    console.error(e);
+  }
 
   defineExpose({ scrollListTo, hasNext, hasPrev });
 
