@@ -94,6 +94,7 @@
     LocationFeatureSpecificationLeaf,
   } from 'schema-dts';
   import UiButton from '../ui/UiButton.vue';
+  import { clickBook } from '../../utils/clickBook';
 
   const { variant } = defineProps<{ variant: Variant }>();
 
@@ -161,6 +162,8 @@
     formVariantName.hidden = true;
 
     if (!existedInput) form.appendChild(formVariantName);
+
+    clickBook(variant.title);
   }
 
   buildSchema();
