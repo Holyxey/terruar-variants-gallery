@@ -76,7 +76,7 @@
       props.varcat || new URLSearchParams(location.search).get('varcat');
 
     if (cat) {
-      chosenCat.value = cat;
+      changeCategory(cat);
     }
     return !!cat;
   }

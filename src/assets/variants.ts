@@ -72,6 +72,22 @@ const sharedTags = [
   'тапочки',
   'предметы гигиены',
 ];
+const tentTags = [
+  createTag('1 кровать', 'living'),
+  createTag('доступ к бассейну', 'swim'),
+  createTag('дровянной камин', 'heat'),
+  createTag('душ', 'shower'),
+  'холодильник',
+  'летняя кухня',
+  'индивидуальный санузел',
+  'мангальная зона',
+  'холодильник',
+  'посуда',
+  'постельное',
+  'wifi',
+  'тапочки',
+  'предметы гигиены',
+];
 
 const variantsElevated: Variant[] = [
   {
@@ -306,27 +322,28 @@ const variantsStandard: Variant[] = [
 ];
 const variantsTent: Variant[] = [
   createVariant({
-    title: 'Палатка',
+    title: 'Мальбек',
     category: Category['Tent'],
     bedSize: { w: 140, l: 200 },
     capacity: 3 + 1,
     sqMeters: 15,
-    tags: [
-      createTag('1 кровать', 'living'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('дровянной камин', 'heat'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'летняя кухня',
-      'индивидуальный санузел',
-      'мангальная зона',
-      'холодильник',
-      'посуда',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
+    tags: tentTags,
+  }),
+  createVariant({
+    title: 'Рислинг',
+    category: Category['Tent'],
+    bedSize: { w: 140, l: 200 },
+    capacity: 3 + 1,
+    sqMeters: 15,
+    tags: tentTags,
+  }),
+  createVariant({
+    title: 'Мерло',
+    category: Category['Tent'],
+    bedSize: { w: 140, l: 200 },
+    capacity: 3 + 1,
+    sqMeters: 15,
+    tags: tentTags,
   }),
 ];
 
