@@ -52,6 +52,8 @@
   import VariantMain from './components/variant/VariantMain.vue';
   import UiButton from './components/ui/UiButton.vue';
 
+  const props = defineProps<{ varcat?: string }>();
+
   const chosenCat = ref<string>();
   const categories: Partial<Record<Category, Variant[]>> = variants.reduce(
     (acc: Partial<Record<Category, Variant[]>>, v: Variant) => {
@@ -70,7 +72,9 @@
     history.pushState({}, '', `?${params.toString()}`);
   }
   function popCat() {
-    const cat = new URLSearchParams(location.search).get('varcat');
+    const cat =
+      props.varcat || new URLSearchParams(location.search).get('varcat');
+
     if (cat) {
       chosenCat.value = cat;
     }

@@ -14,6 +14,7 @@ function load() {
     if (!gallery) {
       const root = document.getElementById('terruar-variants-gallery');
       gallery = document.createElement('terruar-variants-gallery');
+
       root?.appendChild(gallery);
     }
   } catch (error) {
