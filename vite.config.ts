@@ -20,9 +20,7 @@ export default defineConfig({
   ],
 
   define: {
-    'process.env': {
-      API_PATH: PATH,
-    },
+    'process.env.API_PATH': JSON.stringify(PATH),
   },
 
   build: {
