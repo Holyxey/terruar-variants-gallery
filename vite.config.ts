@@ -21,6 +21,7 @@ export default defineConfig({
 
   define: {
     'process.env.API_PATH': JSON.stringify(PATH),
+    'process.env.NODE_ENV': JSON.stringify('production'),
   },
 
   build: {
