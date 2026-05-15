@@ -1,8 +1,9 @@
-import sharp from 'sharp';
 import { variants, type Variant } from './src/assets/variants';
-import { slugify } from 'transliteration';
+import { slugify } from './src/utils/slugify';
 
 const ETAG = JSON.stringify(Math.random().toString(36).substring(3));
+
+const start = Bun.nanoseconds();
 
 async function prepareGalleries(variant: Variant) {
   const photos = new Bun.Glob(`./src/assets/photos/${variant.title}/*`);
@@ -21,24 +22,12 @@ async function prepareGalleries(variant: Variant) {
       const hqPath = `${outDir}/${outName}-hq.webp`;
       const smPath = `${outDir}/${outName}-sm.webp`;
 
-      const exif: sharp.Exif = {
-        IFD0: {
-          ImageDescription: `Глэмпинг Терруар — ${variant.title}`,
-          Artist: 'Alex Yurin <contact@yurin.dev>',
-          Copyright: 'terruarhome.ru',
-          Make: 'Глэмпинг Терруар',
-        },
-      };
-
-      await sharp(filePath)
-        .webp({ quality: 70 })
-        .withExifMerge(exif)
-        .toFile(hqPath);
-      await sharp(filePath)
-        .webp({ quality: 70 })
+      await Bun.file(filePath).image().webp({ quality: 70 }).write(hqPath);
+      await Bun.file(filePath)
+        .image()
         .resize(700)
-        .withExifMerge(exif)
-        .toFile(smPath);
+        .webp({ quality: 70 })
+        .write(smPath);
 
       console.log(hqPath);
       console.log(smPath);
@@ -60,7 +49,15 @@ async function prepareGalleries(variant: Variant) {
     throw `Gallery is empty for ${variant.title}`;
   }
 }
-await Promise.all(variants.map(async (variant) => prepareGalleries(variant)));
+
+await Promise.all(variants.map((variant) => prepareGalleries(variant)));
+
+const end = Bun.nanoseconds();
+console.log(
+  '='.repeat(30) +
+    `\nВремя выполнения: ${(end - start) / 1000000} мс\n` +
+    '='.repeat(30),
+);
 
 async function buildServer() {
   await Bun.build({
