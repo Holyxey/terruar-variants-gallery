@@ -1,4 +1,8 @@
 export const icons = {
+  barbecue: 'https://api.iconify.design/lucide-lab:barbecue.svg',
+  bed: 'https://api.iconify.design/material-symbols:bed-rounded.svg',
+  snow: 'https://api.iconify.design/solar:snowflake-bold-duotone.svg',
+  wifi: 'https://api.iconify.design/material-symbols:android-wifi-3-bar.svg',
   room: 'https://static.tildacdn.com/tild3634-3137-4461-a338-383331653661/room.svg',
   swim: 'https://static.tildacdn.com/tild3935-6536-4238-b931-303837393639/swim.svg',
   alice:

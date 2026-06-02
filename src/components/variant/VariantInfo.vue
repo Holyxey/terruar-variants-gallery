@@ -48,7 +48,9 @@
     </ul>
 
     <!-- Tags -->
-    <ul class="flex flex-wrap gap-1 text-xs font-light select-none lg:text-sm">
+    <ul
+      class="flex flex-wrap gap-1 text-xs font-light lowercase select-none lg:text-sm"
+    >
       <li
         v-for="tag in variant.tags"
         :title="typeof tag === 'string' ? tag : tag.title"
@@ -61,8 +63,8 @@
         <template v-else>
           <div v-if="tag.iconLink">
             <img
-              class="fill-red h-3 w-3"
-              :src="tag.iconLink"
+              class="h-3 w-3"
+              :src="tag.iconLink + '?color=%23b05531&width=32'"
               :alt="`Terruar Icon ${variant.title} ${tag.title}`"
             />
           </div>

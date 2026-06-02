@@ -46,11 +46,10 @@ const sharedTags = [
   createTag('тёплый пол', 'heat'),
   createTag('терраса', 'terrace'),
   createTag('душ', 'shower'),
-  createTag('мангальная зона'),
-  createTag('холодильник'),
+  createTag('холодильник', 'snow'),
   createTag('посуда'),
   createTag('постельное'),
-  createTag('wifi'),
+  createTag('Wi-Fi', 'wifi'),
   createTag('тапочки'),
   createTag('предметы гигиены'),
 ];
@@ -60,7 +59,12 @@ const sharedStandart = {
   sqMeters: 18,
   capacity: 2 + 1,
   bedSize: { w: 160, l: 200 },
-  tags: [createTag('оборудованная кухня', 'kitchen'), ...sharedTags],
+  tags: [
+    createTag('спальня', 'bed'),
+    createTag('мини-кухня', 'kitchen'),
+    createTag('мангал', 'barbecue'),
+    ...sharedTags,
+  ],
   footer: ['Также можем поставить раскладушку'],
 } satisfies Partial<Variant>;
 const sharedStudio = {
@@ -77,6 +81,7 @@ const sharedElevated = {
   sqMeters: 15,
   capacity: 2,
   bedSize: { w: 160, l: 200 },
+  footer: ['Также можем поставить раскладушку'],
 } satisfies Partial<Variant>;
 const sharedTent = {
   category: Category.Tent,
@@ -88,20 +93,22 @@ const sharedTent = {
     createTag('Доступ к бассейну'),
     createTag('Дровяной камин'),
     createTag('Душ'),
-    createTag('Холодильник'),
+    createTag('Холодильник', 'snow'),
     createTag('Летняя кухня'),
     createTag('Индивидуальный санузел'),
-    createTag('Мангальная зона'),
+    createTag('Мангальная зона', 'barbecue'),
     createTag('Посуда'),
     createTag('Постельное'),
-    createTag('Wi-Fi'),
+    createTag('Wi-Fi', 'wifi'),
     createTag('Тапочки'),
     createTag('Предметы гигиены'),
   ],
+  footer: ['Также можем поставить раскладушку'],
 } satisfies Partial<Variant>;
 const sharedCompany = {
   category: Category.Company,
   tags: [...sharedTags],
+  footer: ['Также можем поставить раскладушку'],
 } satisfies Partial<Variant>;
 
 // Variants
@@ -112,7 +119,7 @@ const variantsStandard: Variant[] = [
   }),
   createVariant('Риоха с чаном', {
     ...sharedStandart,
-    tags: [createTag('Банный чан'), ...sharedStandart.tags],
+    tags: [createTag('Персональный чан'), ...sharedStandart.tags],
   }),
 ];
 const variantsStudio: Variant[] = [
