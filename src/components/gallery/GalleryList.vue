@@ -13,8 +13,8 @@
       ref="images"
       @error="hideOnError"
       :class="[
-        'bg-black-dark aspect-4/3 md:aspect-video',
-        'min-h-full max-w-full min-w-full',
+        'bg-black-dark aspect-video',
+        'max-h-full min-h-full max-w-full min-w-full',
         'block snap-center rounded-2xl object-cover',
         'ease-cubic transition-all delay-75 duration-500',
         'pointer-events-none select-none',

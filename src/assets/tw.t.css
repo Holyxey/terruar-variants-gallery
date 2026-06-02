@@ -17,6 +17,15 @@
   --ease-cubic: cubic-bezier(0.3, 1.7, 0.8, 1);
 }
 
+.modal-enter-active,
+.modal-leave-active {
+  @apply ease-cubic transition-all duration-500;
+}
+.modal-enter-from,
+.modal-leave-to {
+  @apply translate-y-2 opacity-0 blur-xs;
+}
+
 @utility no-scrollbar {
   &::-webkit-scrollbar {
     display: none;

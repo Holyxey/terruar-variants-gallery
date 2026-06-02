@@ -2,36 +2,31 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import tw from '@tailwindcss/vite';
 
-const PATH = process.env.DEV
-  ? 'http://localhost:3000/gallery'
-  : process.env.API_PATH;
+export default defineConfig(({ mode }) => {
+  return {
+    plugins: [
+      vue({ features: { customElement: true } }),
+      tw({ optimize: true }),
+    ],
 
-if (!PATH) throw '!process.env.API_PATH';
-
-export default defineConfig({
-  plugins: [
-    vue({
-      features: { customElement: true },
-      style: {},
-    }),
-    tw({
-      optimize: true,
-    }),
-  ],
-
-  define: {
-    'process.env.API_PATH': JSON.stringify(PATH),
-    'process.env.NODE_ENV': JSON.stringify('production'),
-  },
-
-  build: {
-    lib: {
-      cssFileName: 'asd.css',
-      entry: './src/main.ts',
-      name: 'TerruarVariantsGallery',
-      fileName: 'terruar-variants-gallery',
-
-      formats: ['iife'],
+    define: {
+      'process.env.DEV': JSON.stringify(process.env.DEV),
+      'process.env.API_PATH': JSON.stringify(
+        process.env.DEV ? process.env.API_PATH_LOCAL : process.env.API_PATH,
+      ),
+      'process.env.NODE_ENV': JSON.stringify(mode),
     },
-  },
+
+    build: {
+      outDir: 'dist/',
+
+      lib: {
+        entry: './src/main.ts',
+        name: 'TerruarVariantsGallery',
+        fileName: 'terruar-variants-gallery',
+
+        formats: ['iife'],
+      },
+    },
+  };
 });

@@ -2,26 +2,25 @@ name: terruar-gallery
 networks:
   terruar:
 
+x-default-env: &default-env
+  DEV: ${DEV}
+  API_PATH: ${API_PATH:?}
+  API_PATH_LOCAL: ${API_PATH_LOCAL:?}
+  DIR_PUBLIC: /app/${DIR_PUBLIC:?}
+  API_KEY: ${API_KEY:?}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+
 services:
   app:
     build:
       context: .
-      args:
-        DIR_PUBLIC: './dist/public'
-        API_PATH: 'https://api.terruarhome.ru/gallery'
-        DEV: ${DEV}
+      args: *default-env
 
     restart: 'unless-stopped'
     expose:
       - 3000
-    # ports:
-    #   - 3000:3000
 
-    environment:
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      DIR_PUBLIC: './dist/public'
-      API_PATH: 'https://api.terruarhome.ru/gallery'
-      DEV: ${DEV}
+    environment: *default-env
 
     healthcheck:
       test:

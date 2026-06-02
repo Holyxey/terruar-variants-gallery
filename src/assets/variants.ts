@@ -1,13 +1,13 @@
 import { slugify } from '../utils/slugify';
+import { icons } from './icons';
 
-// Strongly typed category enum for better IntelliSense
 export enum Category {
   Elevated = 'Повышенная',
-  Standard = 'Стандарт',
+  Standart = 'Стандарт',
   Tent = 'Палатки',
+  Company = 'На компанию',
+  Studio = 'Домик студия',
 }
-
-// Tag can be a simple string or an object with an optional icon
 export type Tag = { title: string; iconLink?: string } | string;
 export type Variant = {
   title: string;
@@ -20,331 +20,173 @@ export type Variant = {
   footer?: string[];
 };
 
-// Helper to create a Variant with type safety and default values
+export function isCategory(value: string): value is Category {
+  return Object.values<string>(Category).includes(value);
+}
+
 const createVariant = (
-  params: Omit<Variant, 'slug'> & { title: string },
-): Variant => {
-  const { title, ...rest } = params;
+  title: string,
+  params: Omit<Variant, 'slug' | 'title'>,
+) => {
   return {
     title,
     slug: slugify(title),
-    ...rest,
-  } satisfies Variant;
+    ...params,
+  };
 };
-
-// Common icon URLs
-const icons = {
-  room: 'https://static.tildacdn.com/tild3634-3137-4461-a338-383331653661/room.svg',
-  swim: 'https://static.tildacdn.com/tild3935-6536-4238-b931-303837393639/swim.svg',
-  alice:
-    'https://static.tildacdn.com/tild3430-6438-4464-b065-333630306333/_.svg',
-  heat: 'https://static.tildacdn.com/tild3466-3966-4331-b539-623633386438/fire.svg',
-  terrace:
-    'https://static.tildacdn.com/tild3163-6338-4233-b934-623866346331/tera.svg',
-  shower:
-    'https://static.tildacdn.com/tild3632-6335-4236-b734-306464323932/shower.svg',
-  kitchen:
-    'https://static.tildacdn.com/tild3737-6339-4365-a338-663565316630/kitchen.svg',
-  living:
-    'https://static.tildacdn.com/tild6437-3866-4163-b830-373531363664/living.svg',
-} as const;
-
-// Helper to create a tag object
 const createTag = (title: string, iconName?: keyof typeof icons): Tag => ({
   title,
   iconLink: iconName ? icons[iconName] : undefined,
 });
 
-// Shared tag arrays
+// Shared tags
 const sharedTags = [
-  createTag('спальня', 'room'),
   createTag('доступ к бассейну', 'swim'),
   createTag('Яндекс Алиса', 'alice'),
   createTag('тёплый пол', 'heat'),
   createTag('терраса', 'terrace'),
   createTag('душ', 'shower'),
-  createTag('оборудованная кухня', 'kitchen'),
-  'мангальная зона',
-  'холодильник',
-  'посуда',
-  'постельное',
-  'wifi',
-  'тапочки',
-  'предметы гигиены',
-];
-const tentTags = [
-  createTag('1 кровать', 'living'),
-  createTag('доступ к бассейну', 'swim'),
-  createTag('дровянной камин', 'heat'),
-  createTag('душ', 'shower'),
-  'холодильник',
-  'летняя кухня',
-  'индивидуальный санузел',
-  'мангальная зона',
-  'холодильник',
-  'посуда',
-  'постельное',
-  'wifi',
-  'тапочки',
-  'предметы гигиены',
+  createTag('мангальная зона'),
+  createTag('холодильник'),
+  createTag('посуда'),
+  createTag('постельное'),
+  createTag('wifi'),
+  createTag('тапочки'),
+  createTag('предметы гигиены'),
 ];
 
-const variantsElevated: Variant[] = [
-  {
-    title: 'Лаура',
-    slug: slugify('Лаура'),
-    category: Category.Elevated,
-    capacity: 2,
-    tags: sharedTags,
-    sqMeters: 15,
-    bedSize: { w: 160, l: 200 },
-    footer: ['Также можем поставить раскладушку'],
-  },
-  {
-    title: 'Валенсия',
-    slug: slugify('Валенсия'),
-    category: Category.Elevated,
-    capacity: 6,
-    tags: [
-      createTag('2 спальни', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('тёплый пол', 'heat'),
-      createTag('гостиная', 'living'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-    sqMeters: 63,
-    bedSize: { w: 160, l: 200 },
-    footer: ['Также можем поставить раскладушку'],
-  },
-  {
-    title: 'Мендоза',
-    slug: slugify('Мендоза'),
-    category: Category.Elevated,
-    capacity: 2,
-    sqMeters: 15,
-    bedSize: { w: 160, l: 200 },
-    footer: ['Также можем поставить раскладушку'],
-    tags: sharedTags,
-  },
-  {
-    title: 'Этна',
-    slug: slugify('Этна'),
-    category: Category.Elevated,
-    capacity: 2,
-    sqMeters: 15,
-    bedSize: { w: 160, l: 200 },
-    footer: ['Также можем поставить раскладушку'],
-    tags: sharedTags,
-  },
-  {
-    title: 'Апулия',
-    slug: slugify('Апулия'),
-    category: Category.Elevated,
-    capacity: 2,
-    sqMeters: 15,
-    bedSize: { w: 160, l: 200 },
-    footer: ['Также можем поставить раскладушку'],
-    tags: sharedTags,
-  },
-];
+const sharedStandart = {
+  category: Category.Standart,
+  sqMeters: 18,
+  capacity: 2 + 1,
+  bedSize: { w: 160, l: 200 },
+  tags: [createTag('оборудованная кухня', 'kitchen'), ...sharedTags],
+  footer: ['Также можем поставить раскладушку'],
+} satisfies Partial<Variant>;
+const sharedStudio = {
+  category: Category.Studio,
+  sqMeters: 15,
+  capacity: 2 + 2,
+  bedSize: { w: 140, l: 200 },
+  tags: [...sharedTags],
+  footer: ['Также можем поставить раскладушку'],
+} satisfies Partial<Variant>;
+const sharedElevated = {
+  category: Category.Elevated,
+  tags: [...sharedTags],
+  sqMeters: 15,
+  capacity: 2,
+  bedSize: { w: 160, l: 200 },
+} satisfies Partial<Variant>;
+const sharedTent = {
+  category: Category.Tent,
+  bedSize: { w: 140, l: 200 },
+  sqMeters: 15,
+  capacity: 4,
+  tags: [
+    createTag('1 кровать'),
+    createTag('Доступ к бассейну'),
+    createTag('Дровяной камин'),
+    createTag('Душ'),
+    createTag('Холодильник'),
+    createTag('Летняя кухня'),
+    createTag('Индивидуальный санузел'),
+    createTag('Мангальная зона'),
+    createTag('Посуда'),
+    createTag('Постельное'),
+    createTag('Wi-Fi'),
+    createTag('Тапочки'),
+    createTag('Предметы гигиены'),
+  ],
+} satisfies Partial<Variant>;
+const sharedCompany = {
+  category: Category.Company,
+  tags: [...sharedTags],
+} satisfies Partial<Variant>;
+
+// Variants
 const variantsStandard: Variant[] = [
-  createVariant({
-    title: 'Шампань',
-    bedSize: { l: 200, w: 140 },
-    capacity: 2 + 2,
-    category: Category['Standard'],
+  createVariant('Риоха', {
+    ...sharedStandart,
+    tags: [...sharedStandart.tags],
+  }),
+  createVariant('Риоха с чаном', {
+    ...sharedStandart,
+    tags: [createTag('Банный чан'), ...sharedStandart.tags],
+  }),
+];
+const variantsStudio: Variant[] = [
+  createVariant('Бордо', {
+    ...sharedStudio,
+  }),
+  createVariant('Рейнау', {
+    ...sharedStudio,
+  }),
+  createVariant('Бургундия', {
+    ...sharedStudio,
+  }),
+  createVariant('Тоскана', {
+    ...sharedStudio,
+  }),
+  createVariant('Прованс', {
+    ...sharedStudio,
+  }),
+];
+const variantsElevated: Variant[] = [
+  createVariant('Лаура', {
+    ...sharedElevated,
+    tags: [...sharedElevated.tags],
+  }),
+  createVariant('Напа', {
+    ...sharedElevated,
+    tags: [...sharedElevated.tags],
+  }),
+  createVariant('Мендоза', {
+    ...sharedElevated,
+    tags: [...sharedElevated.tags],
+  }),
+  createVariant('Этна', {
+    ...sharedElevated,
+    tags: [...sharedElevated.tags],
+  }),
+  createVariant('Апулия', {
+    ...sharedElevated,
+    tags: [...sharedElevated.tags],
+  }),
+];
+const variantsCompany: Variant[] = [
+  createVariant('Шампань', {
+    ...sharedCompany,
+    capacity: 4,
     sqMeters: 22,
-    tags: [
-      createTag('спальня + гостиная', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-  }),
-  createVariant({
-    title: 'Бордо',
-    bedSize: { l: 200, w: 140 },
-    capacity: 2,
-    category: Category['Standard'],
-    sqMeters: 15,
-    tags: [
-      createTag('спальня', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-  }),
-  createVariant({
-    title: 'Рейнау',
-    bedSize: { l: 200, w: 140 },
-    capacity: 2,
-    category: Category['Standard'],
-    sqMeters: 15,
-    tags: [
-      createTag('спальня', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-  }),
-  createVariant({
-    title: 'Бургундия',
-    category: Category['Standard'],
-    capacity: 2,
-    sqMeters: 15,
     bedSize: { w: 140, l: 200 },
-    tags: [
-      createTag('спальня', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
   }),
-  createVariant({
-    title: 'Тоскана',
-    category: Category['Standard'],
-    capacity: 2,
-    sqMeters: 15,
-    bedSize: { w: 140, l: 200 },
-    tags: [
-      createTag('спальня', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-  }),
-  createVariant({
-    title: 'Прованс',
-    category: Category['Standard'],
-    capacity: 2,
-    sqMeters: 15,
-    bedSize: { w: 140, l: 200 },
-    tags: [
-      createTag('спальня', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
-  }),
-  createVariant({
-    title: 'Медок',
-    category: Category['Standard'],
-    capacity: 2 + 2,
+  createVariant('Медок', {
+    ...sharedCompany,
+    capacity: 4,
     sqMeters: 36,
     bedSize: { w: 140, l: 200 },
-    tags: [
-      createTag('спальня + гостиная', 'room'),
-      createTag('доступ к бассейну', 'swim'),
-      createTag('Яндекс Алиса', 'alice'),
-      createTag('оборудованная кухня', 'kitchen'),
-      createTag('терраса', 'terrace'),
-      createTag('душ', 'shower'),
-      'холодильник',
-      'посуда',
-      'мангальная зона',
-      'терасса',
-      'постельное',
-      'wifi',
-      'тапочки',
-      'предметы гигиены',
-    ],
+  }),
+  createVariant('Валенсия', {
+    ...sharedCompany,
+    capacity: 6,
+    sqMeters: 63,
+    bedSize: { w: 160, l: 200 },
   }),
 ];
 const variantsTent: Variant[] = [
-  createVariant({
-    title: 'Мальбек',
-    category: Category['Tent'],
-    bedSize: { w: 140, l: 200 },
-    capacity: 3 + 1,
-    sqMeters: 15,
-    tags: tentTags,
+  createVariant('Глэмпинг с перс.душем', {
+    ...sharedTent,
   }),
-  createVariant({
-    title: 'Рислинг',
-    category: Category['Tent'],
-    bedSize: { w: 140, l: 200 },
-    capacity: 3 + 1,
-    sqMeters: 15,
-    tags: tentTags,
-  }),
-  createVariant({
-    title: 'Мерло',
-    category: Category['Tent'],
-    bedSize: { w: 140, l: 200 },
-    capacity: 3 + 1,
-    sqMeters: 15,
-    tags: tentTags,
-  }),
+  // createVariant('Мальбек', {
+  //   ...sharedTent,
+  // }),
+  // createVariant('Рислинг', {
+  //   ...sharedTent,
+  // }),
+  // createVariant('Мерло', {
+  //   ...sharedTent,
+  // }),
 ];
 
 //
@@ -352,4 +194,6 @@ export const variants: Variant[] = [
   ...variantsElevated,
   ...variantsStandard,
   ...variantsTent,
+  ...variantsCompany,
+  ...variantsStudio,
 ];

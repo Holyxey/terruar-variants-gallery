@@ -6,7 +6,8 @@
     "clear": "rm -rf dist",
     "lint": "bun oxlint && bun oxfmt",
     "build:app": "bun --bun vite build && bun run build.ts",
-    "server:start": "bun run dist/server"
+    "docker:dev:up": "docker compose -f docker-compose.yml -f docker-compose-dev.yml up",
+    "server:start": "bun --bun dist/server.js"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.2",
@@ -18,9 +19,11 @@
     "@vitejs/plugin-vue": "^6.0.7",
     "oxfmt": "^0.49.0",
     "oxlint": "^1.64.0",
+    "p-limit": "^7.3.0",
     "schema-dts": "^2.0.0",
     "vite": "^8.0.13",
-    "vue": "^3.5.34"
+    "vue": "^3.5.34",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
     "typescript": "^6.0.3"

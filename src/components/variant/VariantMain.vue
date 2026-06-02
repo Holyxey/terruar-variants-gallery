@@ -1,5 +1,6 @@
 <template>
   <article
+    :data-variant-slug="variant.slug"
     :class="['rounded-3xl bg-black p-4', 'flex flex-col gap-4 md:flex-row']"
   >
     <VariantInfo :variant :class="['flex-2']" />
