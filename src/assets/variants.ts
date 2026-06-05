@@ -63,6 +63,7 @@ const sharedStandart = {
     createTag('спальня', 'bed'),
     createTag('мини-кухня', 'kitchen'),
     createTag('мангал', 'barbecue'),
+    createTag('кондиционер', 'snow'),
     ...sharedTags,
   ],
   footer: ['Также можем поставить раскладушку'],
@@ -146,7 +147,7 @@ const variantsElevated: Variant[] = [
   }),
   createVariant('Напа', {
     ...sharedElevated,
-    tags: [...sharedElevated.tags],
+    tags: [...sharedElevated.tags, createTag('кондиционер', 'snow')],
   }),
   createVariant('Мендоза', {
     ...sharedElevated,
