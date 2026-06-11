@@ -1,8 +1,9 @@
 import { defineCustomElement } from 'vue';
-import App from './terruar-variants-gallery.ce.vue';
+import Gallery from './terruar-variants-gallery.ce.vue';
+import Map from './terruar-interactive-map.ce.vue';
 
-const app = defineCustomElement(App, {
-  shadowRoot: true,
-});
+const galleryComponent = defineCustomElement(Gallery, { shadowRoot: true });
+const mapComponent = defineCustomElement(Map, { shadowRoot: true });
 
-customElements.define('terruar-variants-gallery', app);
+customElements.define('terruar-variants-gallery', galleryComponent);
+customElements.define('terruar-interactive-map', mapComponent);

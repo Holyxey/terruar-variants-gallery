@@ -17,7 +17,7 @@
         'max-h-full min-h-full max-w-full min-w-full',
         'block snap-center rounded-2xl object-cover',
         'ease-cubic transition-all delay-75 duration-500',
-        'pointer-events-none select-none',
+        'bg-black-dark pointer-events-none text-white select-none',
       ]"
       :key="src"
       :src

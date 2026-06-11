@@ -42,7 +42,9 @@
 
   type Prefix = 'hq' | 'sm';
 
-  const { variant } = defineProps<{ variant: Variant }>();
+  const { variant } = defineProps<{
+    variant: Variant;
+  }>();
 
   const list = ref<Record<Prefix, string[]>>({ hq: [], sm: [] });
   const prefix = ref<Prefix>(window.innerWidth > 460 ? 'hq' : 'sm');

@@ -8,9 +8,26 @@ export enum Category {
   Company = 'На компанию',
   Studio = 'Домик студия',
 }
+export type VariantTitle =
+  | 'Лаура'
+  | 'Напа'
+  | 'Мендоза'
+  | 'Этна'
+  | 'Апулия'
+  | 'Риоха'
+  | 'Риоха с чаном'
+  | 'Глэмпинг с перс.душем'
+  | 'Шампань'
+  | 'Медок'
+  | 'Валенсия'
+  | 'Бордо'
+  | 'Рейнау'
+  | 'Бургундия'
+  | 'Тоскана'
+  | 'Прованс';
 export type Tag = { title: string; iconLink?: string } | string;
 export type Variant = {
-  title: string;
+  title: VariantTitle;
   slug: string;
   category: Category;
   capacity: number;
@@ -25,7 +42,7 @@ export function isCategory(value: string): value is Category {
 }
 
 const createVariant = (
-  title: string,
+  title: VariantTitle,
   params: Omit<Variant, 'slug' | 'title'>,
 ) => {
   return {
@@ -204,4 +221,4 @@ export const variants: Variant[] = [
   ...variantsTent,
   ...variantsCompany,
   ...variantsStudio,
-];
+] as const;

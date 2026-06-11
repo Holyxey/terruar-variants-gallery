@@ -82,7 +82,12 @@
       </ul>
     </div>
 
-    <UiButton is="button" @click="bubbleBook"> Забронировать </UiButton>
+    <div class="flex flex-wrap gap-2" @click="$emit('closePopUp')">
+      <UiButton class="flex-1" is="button" v-if="isPopup"> Закрыть </UiButton>
+      <UiButton class="flex-1" is="button" @click="bubbleBook(variant.title)">
+        Забронировать
+      </UiButton>
+    </div>
   </div>
 </template>
 
@@ -92,30 +97,12 @@
   import IconSquare from '../icons/IconSquare.vue';
   import IconBed from '../icons/IconBed.vue';
   import UiButton from '../ui/UiButton.vue';
-  import { clickBook } from '../../utils/clickBook';
+  import { bubbleBook } from '../../utils/bubbleBook.ts';
 
-  const { variant } = defineProps<{ variant: Variant }>();
+  const { variant } = defineProps<{
+    variant: Variant;
+    isPopup?: true;
+  }>();
 
-  function bubbleBook() {
-    document.getElementById('bubbleBook')?.click();
-
-    const form: HTMLFormElement | null = document.querySelector(
-      '[data-book-form] form',
-    );
-
-    if (!form) return;
-
-    const existedInput: null | HTMLInputElement = form.querySelector(
-      '[name="Название домика"]',
-    );
-
-    const formVariantName = existedInput || document.createElement('input');
-    formVariantName.name = 'Название домика';
-    formVariantName.value = variant.title;
-    formVariantName.hidden = true;
-
-    if (!existedInput) form.appendChild(formVariantName);
-
-    clickBook(variant.title);
-  }
+  defineEmits<{ closePopUp: [] }>();
 </script>
