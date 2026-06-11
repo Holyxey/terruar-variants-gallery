@@ -31,6 +31,7 @@
   import VariantMain from '../variant/VariantMain.vue';
   import { computed, onMounted, onUnmounted, ref } from 'vue';
   import { variants, type Variant } from '../../assets/variants';
+  import { jdivToggleVisibility } from '../../utils/jdiv.ts';
 
   const props = defineProps<{ title?: string }>();
   const emit = defineEmits<{ clear: [] }>();
@@ -46,8 +47,12 @@
       params.set('varcat', foundOne.category);
       history.pushState({}, '', `?${params.toString()}`);
 
+      jdivToggleVisibility('hide');
+
       return foundOne;
     }
+
+    jdivToggleVisibility('show');
     return undefined;
   });
 
@@ -70,5 +75,6 @@
   });
   onUnmounted(() => {
     window.removeEventListener('keydown', keyListner);
+    jdivToggleVisibility('show');
   });
 </script>
