@@ -4,7 +4,7 @@
     :class="[
       'top-0 right-0 bottom-0 left-0 flex',
       'pt-safe-top pr-safe-right pl-safe-left pb-safe-bottom',
-      'no-scrollbar fixed z-100500 overflow-x-auto',
+      'no-scrollbar fixed z-9999999999! overflow-x-auto',
       'backdrop-blur-lg',
       'ease-cubic transition-all duration-500',
 
