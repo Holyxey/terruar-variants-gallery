@@ -64,6 +64,7 @@
 
   function close() {
     isVisible.value = false;
+    jdivToggleVisibility('show');
 
     setTimeout(() => {
       emit('clear');
