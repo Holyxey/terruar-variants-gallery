@@ -1,6 +1,6 @@
 <template>
   <article
-    class="no-scrollbar mx-auto my-10 flex max-w-7xl flex-col gap-4 overflow-x-auto p-2 md:my-12 md:gap-10 lg:flex-row"
+    class="no-scrollbar relative mx-auto my-10 flex max-w-7xl flex-col gap-4 overflow-x-auto p-2 md:my-12 md:gap-10 lg:flex-row"
   >
     <MapHousePopup :title="chosenVariant" @clear="chosenVariant = undefined" />
 
