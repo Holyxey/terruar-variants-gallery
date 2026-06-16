@@ -97,7 +97,7 @@ const sharedStandart = {
 const sharedStudio = {
   category: Category.Studio,
   sqMeters: 15,
-  capacity: 2 + 2,
+  capacity: 2,
   bedSize: { w: 140, l: 200 },
   tags: [...sharedTags],
   footer: ['Также можем поставить раскладушку'],
