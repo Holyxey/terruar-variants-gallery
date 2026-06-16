@@ -1,7 +1,7 @@
 export function jdivToggleVisibility(to: 'hide' | 'show') {
   const block: HTMLElement | null = document.querySelector('jdiv');
   if (!block) {
-    console.error("Can't find <jdiv> to " + to);
+    console.log("%cCan't find <jdiv> to " + to, 'color:orange');
     return;
   }
 

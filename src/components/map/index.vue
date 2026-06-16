@@ -230,6 +230,7 @@
         />
       </div>
     </div>
+    <UiScrollAnim class="right-0 bottom-7 scale-140 drop-shadow-lg md:hidden" />
   </article>
 </template>
 
@@ -239,6 +240,7 @@
   import MapHouse from './MapHouse.vue';
   import MapHousePopup from './MapHousePopup.vue';
   import UiButton from '../ui/UiButton.vue';
+  import UiScrollAnim from '../ui/UiScrollAnim.vue';
 
   const company = useTemplateRef('Company');
   const standart = useTemplateRef('Standart');
