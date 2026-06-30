@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, watch } from 'vue';
+  import { nextTick, onMounted, ref, watch } from 'vue';
   import UiButton from '../ui/UiButton.vue';
-  import { jdivToggleVisibility } from '../../utils/jdiv';
+  import { widgetsVisibility } from '../../utils/widgetsVisibility.ts';
 
   const menuList: Record<string, string> = {
     base: 'https://cdn.yurin.dev/terruar/menu/Terruar%20menu%202026%20Jul.pdf',
@@ -36,11 +36,11 @@
   function open(key: keyof typeof menuList) {
     if (!menuList[key]) return console.warn(key, 'menu is non defined');
 
-    jdivToggleVisibility('hide');
+    widgetsVisibility('hide');
     currentMenuLink.value = menuList[key];
   }
   const close = () => {
-    jdivToggleVisibility('show');
+    widgetsVisibility('show');
     currentMenuLink.value = undefined;
   };
 
@@ -50,18 +50,20 @@
   });
 
   function init() {
-    console.log('QR Menu init');
-    const query = new URL(location.href).searchParams.get('menu');
-    if (query && !!menuList[query]) open(query);
+    nextTick(() => {
+      console.log('QR Menu init');
+      const query = new URL(location.href).searchParams.get('menu');
+      if (query && !!menuList[query]) open(query);
 
-    const buttons: HTMLElement[] = Array.from(
-      document.querySelectorAll('[data-qr-menu]'),
-    );
+      const buttons: HTMLElement[] = Array.from(
+        document.querySelectorAll('[data-qr-menu]'),
+      );
 
-    for (const button of buttons) {
-      const name = button.dataset.qrMenu;
-      if (name) button.addEventListener('click', () => open(name));
-    }
+      for (const button of buttons) {
+        const name = button.dataset.qrMenu;
+        if (name) button.addEventListener('click', () => open(name));
+      }
+    });
   }
 
   onMounted(() => {
