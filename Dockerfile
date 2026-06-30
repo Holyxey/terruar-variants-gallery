@@ -1,4 +1,7 @@
-FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim AS builder
+FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim AS base
+
+
+FROM base AS builder
 
 WORKDIR /app
 
@@ -16,7 +19,7 @@ ARG API_KEY
 RUN bun run lint
 RUN bun run build:app
 
-FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim
+FROM base
 
 WORKDIR /app
 
