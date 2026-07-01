@@ -68,7 +68,7 @@ async function saveGalleryOfCategory(cat: z.infer<typeof CategoriesSchema>) {
 
   const start = performance.now();
 
-  const CATEGORY_DIR = `${process.env.DIR_PUBLIC}/${slug}/`;
+  const CATEGORY_DIR = `${process.env.DIR_PUBLIC}/cats/${slug}/`;
 
   await Bun.$`mkdir -p ${CATEGORY_DIR}`;
 

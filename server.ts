@@ -81,12 +81,12 @@ const app = new Elysia({ prefix: '/gallery' })
         if (cache.value) return status(200, cache.value.arr);
 
         const list = new Bun.Glob(
-          `${process.env.DIR_PUBLIC}/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
+          `${process.env.DIR_PUBLIC}/cats/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
         );
         const arr: string[] = [];
 
         for await (const filePath of list.scan('.')) {
-          arr.push(`${API_PATH}/${slug}/` + filePath.split('/').pop());
+          arr.push(`${API_PATH}/cats/${slug}/` + filePath.split('/').pop());
         }
 
         if (!arr.length) return status('Not Found');

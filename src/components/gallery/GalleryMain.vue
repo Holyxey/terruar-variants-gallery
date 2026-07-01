@@ -66,7 +66,7 @@
           `?size=${prefix.value}`;
 
         console.log(path);
-        const req = await fetch(path);
+        const req = await fetch(path, { headers: {} });
         const arr = await req.json();
 
         if (req.ok && Array.isArray(arr)) {

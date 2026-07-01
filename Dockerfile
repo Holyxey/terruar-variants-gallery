@@ -29,5 +29,7 @@ WORKDIR /app
 COPY package.json ./
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/utils/pdfjs ./dist/public/pdfjs
+COPY --from=builder /app/src/assets/menus ./dist/public/menus
 
 CMD ["bun", "server:start"]

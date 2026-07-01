@@ -8,5 +8,5 @@
       { "assertionStyle": "never" }
     ]
   },
-  "ignorePatterns": ["node_modules/**"]
+  "ignorePatterns": ["node_modules/**", "src/utils/pdfjs/**"]
 }
