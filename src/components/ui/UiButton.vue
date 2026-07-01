@@ -9,7 +9,7 @@
       'cursor-pointer transition-all duration-300',
 
       variant === 'action' ? 'rounded-lg' : 'rounded-full',
-      option === 'filled' ? 'bg-warning-dark' : 'bg-black outline',
+      option === 'filled' ? 'bg-warning-dark' : 'bg-black',
     ]"
   >
     <slot />
