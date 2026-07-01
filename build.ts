@@ -1,5 +1,3 @@
-import { saveImagesFromAPI } from './saveImagesFromAPI';
-
 const ETAG = JSON.stringify(Math.random().toString(36).substring(3));
 const API_PATH = process.env.DEV
   ? process.env.API_PATH_LOCAL
@@ -33,5 +31,4 @@ async function buildServer() {
   }
 }
 
-await saveImagesFromAPI();
 await buildServer();

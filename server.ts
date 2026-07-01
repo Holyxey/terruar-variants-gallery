@@ -1,6 +1,7 @@
 import Elysia, { t } from 'elysia';
 import cors from '@elysiajs/cors';
 import { RedisCache } from './src/utils/redisCache';
+import { saveImagesFromAPI } from './saveImagesFromAPI';
 
 const ETAG = process.env.ETAG;
 
@@ -109,27 +110,27 @@ const app = new Elysia({ prefix: '/gallery' })
     },
   )
 
-  .get(
-    '/*',
-    async ({ params, status }) => {
-      const path = params['*'];
+  .get('/*', async ({ params, status }) => {
+    const path = params['*'];
 
-      try {
-        const file = Bun.file(process.env.DIR_PUBLIC + `/${path}`);
+    try {
+      const file = Bun.file(process.env.DIR_PUBLIC + `/${path}`);
 
-        if (await file.exists()) {
-          return status(200, file);
-        } else {
-          return status('Not Found', 'Image is not found');
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : '!';
-        console.error(message + error);
-
-        return status('Internal Server Error', message);
+      if (await file.exists()) {
+        return status(200, file);
+      } else {
+        return status('Not Found', 'Image is not found');
       }
-    },
-    {},
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '!';
+      console.error(message + error);
+
+      return status('Internal Server Error', message);
+    }
+  });
+
+app.onStart(async () => {
+  await saveImagesFromAPI();
+});
 
 app.listen(3000);

@@ -40,18 +40,22 @@ async function parseCategories(): Promise<z.infer<typeof CategoriesSchemaArr>> {
   }
 }
 
-async function prepareImage(path: string, buffer: ArrayBuffer) {
+async function prepareImages(args: {
+  catName: string;
+  hqPath: string;
+  smPath: string;
+  origBuffer: ArrayBuffer;
+}) {
   try {
-    const hqPath = `${path}-hq.webp`;
-    const smPath = `${path}-sm.webp`;
+    const image = new Bun.Image(args.origBuffer);
 
-    const image = new Bun.Image(buffer);
-
-    await image.resize(1200).webp({ quality: 70 }).write(hqPath);
-    await image.resize(700).webp({ quality: 70 }).write(smPath);
+    await image.resize(1200).webp({ quality: 70 }).write(args.hqPath);
+    await image.resize(700).webp({ quality: 70 }).write(args.smPath);
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : `!prepare photo for ${path}`;
+      error instanceof Error
+        ? error.message
+        : `!prepare photo for ${args.catName}`;
 
     console.error(message + error);
   }
@@ -66,9 +70,10 @@ async function saveGalleryOfCategory(cat: z.infer<typeof CategoriesSchema>) {
 
   const CATEGORY_DIR = `${process.env.DIR_PUBLIC}/${slug}/`;
 
-  await Bun.$`rm -rf ${CATEGORY_DIR} && mkdir -p ${CATEGORY_DIR}`;
+  await Bun.$`mkdir -p ${CATEGORY_DIR}`;
 
-  let i = 0;
+  let existsCount = 0;
+  let savedCount = 0;
 
   await Promise.all(
     cat.images.map((src, index) =>
@@ -80,21 +85,32 @@ async function saveGalleryOfCategory(cat: z.infer<typeof CategoriesSchema>) {
         );
 
         try {
-          const response = await fetch(src, {
-            headers: headersWithAuth,
-            signal: controller.signal,
-          });
+          const ind = String(index + 1).padStart(3, '0');
+          const hash = Bun.hash(src);
+          const hqPath = `${CATEGORY_DIR}/${ind}-${hash}-hq.webp`;
+          const smPath = `${CATEGORY_DIR}/${ind}-${hash}-sm.webp`;
 
-          if (!response.ok) throw new Error('!response.ok');
+          const hqFile = Bun.file(hqPath);
+          const smFile = Bun.file(smPath);
+          const exists = (await hqFile.exists()) && (await smFile.exists());
+          if (!exists) {
+            const response = await fetch(src, {
+              headers: headersWithAuth,
+              signal: controller.signal,
+            });
 
-          const buffer = await response.arrayBuffer();
+            if (!response.ok) throw new Error('!response.ok');
 
-          const format = new URL(src).pathname.split('.').pop();
-          const filename = String(index + 1).padStart(3, '0');
-          const filePath = `${CATEGORY_DIR}/${filename}.${format}`;
-          await prepareImage(filePath, buffer);
-          i++;
-          saved++;
+            const origBuffer = await response.arrayBuffer();
+            await prepareImages({
+              origBuffer,
+              hqPath,
+              smPath,
+              catName: cat.name,
+            });
+            savedCount++;
+            saved++;
+          } else existsCount++;
         } catch (error) {
           const message =
             error instanceof Error
@@ -115,9 +131,10 @@ async function saveGalleryOfCategory(cat: z.infer<typeof CategoriesSchema>) {
   console.log(
     CATEGORY_NAME,
     `Saved`,
-    i,
+    savedCount,
     '/',
     cat.images.length,
+    `(exists: ${existsCount})`,
     `${duration} sec.`,
   );
   console.log('='.repeat(20) + '\n');
