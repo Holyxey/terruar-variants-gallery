@@ -1,8 +1,7 @@
 name: terruar-gallery
 networks:
   terruar:
-volumes:
-  public:
+
 
 x-default-env: &default-env
   DEV: ${DEV}
@@ -21,9 +20,6 @@ services:
     restart: 'unless-stopped'
     expose:
       - 3000
-
-    volumes:
-      - public:/app/dist/public
 
     environment: *default-env
 
