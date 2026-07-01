@@ -1,9 +1,8 @@
 <template>
   <div
     :class="[
-      'fixed top-0 left-0 z-950 h-full w-full',
-      'bg-black-dark/20 flex flex-col items-center justify-end gap-4',
-      'px-4 pt-4',
+      'fixed top-0 left-0 z-9999999999! h-full w-full',
+      'bg-black-dark/20 flex flex-col items-center justify-end gap-4 px-4 pt-4',
       'transition-all duration-500 ease-in-out',
       currentMenuLink
         ? 'backdrop-blur-xs'
