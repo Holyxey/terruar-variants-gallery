@@ -13,13 +13,15 @@ export function widgetsVisibility(to: 'hide' | 'show') {
     const ctouch: HTMLElement | null =
       document.querySelector('[id*="alltouch"]');
 
+    const els = [jdiv, ctouch];
+
     switch (to) {
       case 'hide': {
-        [jdiv, ctouch].forEach((el) => el && hideElement(el));
+        els.forEach((el) => el && hideElement(el));
         break;
       }
       case 'show': {
-        [jdiv, ctouch].forEach((el) => el && showElement(el));
+        els.forEach((el) => el && showElement(el));
         break;
       }
     }

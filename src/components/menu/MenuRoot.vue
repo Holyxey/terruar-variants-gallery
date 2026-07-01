@@ -29,24 +29,28 @@
 </template>
 
 <script setup lang="ts">
-  import { nextTick, onMounted, ref, watch } from 'vue';
+  import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
   import UiButton from '../ui/UiButton.vue';
   import { widgetsVisibility } from '../../utils/widgetsVisibility.ts';
 
   const menuList: Record<string, string> = {
-    // base: 'https://cdn.yurin.dev/terruar/menu/Terruar%20menu%202026%20Jul.pdf',
     base: 'https://drive.google.com/file/d/1hPd3olwh0xhHVDh4PeUmKlWVzlJyZ6gC/preview?usp=sharing',
   } as const;
 
   const currentMenuLink = ref<string | undefined>();
+  let interval: ReturnType<typeof setInterval>;
 
   function open(key: keyof typeof menuList) {
     if (!menuList[key]) return console.warn(key, 'menu is non defined');
 
-    widgetsVisibility('hide');
+    interval = setInterval(() => {
+      widgetsVisibility('hide');
+    }, 1500);
     currentMenuLink.value = menuList[key];
   }
   const close = () => {
+    if (interval) clearInterval(interval);
+
     widgetsVisibility('show');
     currentMenuLink.value = undefined;
   };
@@ -78,5 +82,9 @@
       if (document.readyState === 'complete') init();
       else window.addEventListener('load', () => init());
     });
+  });
+
+  onUnmounted(() => {
+    if (interval) clearInterval(interval);
   });
 </script>
