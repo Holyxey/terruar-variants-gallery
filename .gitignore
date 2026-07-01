@@ -1,6 +1,7 @@
 .env
 **/delme*
 parsedPhoto/
+docker-compose-override.yml
 
 # Logs
 logs

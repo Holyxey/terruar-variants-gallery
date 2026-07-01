@@ -11,13 +11,20 @@
     ]"
     @click="close"
   >
-    <UiButton is="button">Закрыть</UiButton>
+    <div v-if="currentMenuLink" class="flex gap-4">
+      <UiButton option="border" :href="currentMenuLink" is="a" target="_blank">
+        Открыть документ
+      </UiButton>
+
+      <UiButton is="button">Закрыть</UiButton>
+    </div>
+
     <iframe
       @click.stop
       :src="currentMenuLink"
-      frameborder="0"
-      sandbox="allow-scripts"
-      :class="['bg-black-dark h-10/12 min-h-1/2 w-full rounded-t-xl']"
+      :class="[
+        'bg-black-dark no-scrollbar h-9/12 min-h-1/2 w-full max-w-xl rounded-t-xl',
+      ]"
     ></iframe>
   </div>
 </template>
@@ -28,7 +35,8 @@
   import { widgetsVisibility } from '../../utils/widgetsVisibility.ts';
 
   const menuList: Record<string, string> = {
-    base: 'https://cdn.yurin.dev/terruar/menu/Terruar%20menu%202026%20Jul.pdf',
+    // base: 'https://cdn.yurin.dev/terruar/menu/Terruar%20menu%202026%20Jul.pdf',
+    base: 'https://drive.google.com/file/d/1hPd3olwh0xhHVDh4PeUmKlWVzlJyZ6gC/preview?usp=sharing',
   } as const;
 
   const currentMenuLink = ref<string | undefined>();
@@ -67,7 +75,9 @@
   }
 
   onMounted(() => {
-    if (document.readyState === 'complete') init();
-    else window.addEventListener('load', () => init());
+    nextTick(() => {
+      if (document.readyState === 'complete') init();
+      else window.addEventListener('load', () => init());
+    });
   });
 </script>
