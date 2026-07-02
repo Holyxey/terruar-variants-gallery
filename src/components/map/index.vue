@@ -26,9 +26,10 @@
     <!-- Map -->
     <div :class="['relative min-w-2xl']">
       <img
-        src="https://static.tildacdn.com/tild6336-3032-4337-b466-616539326634/Screenshot_2026-06-0.png"
+        src="https://optim.tildacdn.com/tild6336-3032-4337-b466-616539326634/-/format/webp/Screenshot_2026-06-0.png"
         alt="Терруар глэмпинг в Тульской области карта территории"
         class="rounded-xl md:rounded-4xl"
+        loading="lazy"
       />
 
       <div ref="Company">
