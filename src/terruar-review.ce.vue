@@ -1,9 +1,9 @@
 <template>
-  <MenuRoot />
+  <ReviewRoot />
 </template>
 
 <script setup lang="ts">
-  import MenuRoot from './components/menu/MenuRoot.vue';
+  import ReviewRoot from './components/reveiw/ReviewRoot.vue';
 </script>
 
 <style>

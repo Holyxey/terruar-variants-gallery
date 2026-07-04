@@ -17,10 +17,7 @@
 </template>
 
 <script setup lang="ts">
-  type Props = {
-    option?: 'filled' | 'border';
-    variant?: 'action' | 'tab';
-  } & (
+  type Props = (
     | {
         is: 'a';
         href: string;
@@ -31,7 +28,10 @@
         href?: never;
         target?: never;
       }
-  );
+  ) & {
+    option?: 'filled' | 'border';
+    variant?: 'action' | 'tab';
+  };
 
   const { option = 'filled', variant = 'action' } = defineProps<Props>();
 </script>
