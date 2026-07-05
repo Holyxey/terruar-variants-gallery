@@ -6,9 +6,10 @@ networks:
 x-default-env: &default-env
   DEV: ${DEV}
   API_PATH: ${API_PATH:?}
-  API_PATH_LOCAL: ${API_PATH_LOCAL:?}
-  DIR_PUBLIC: /app/${DIR_PUBLIC:?}
   API_KEY: ${API_KEY:?}
+  S3_ENDPOINT: ${S3_ENDPOINT:?}
+  S3_ACCESS: ${S3_ACCESS:?}
+  S3_SECRET: ${S3_SECRET:?}
   REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
 services:

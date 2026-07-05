@@ -1,6 +1,7 @@
 import z from 'zod';
 import pLimit from 'p-limit';
 import { slugify } from './src/utils/slugify';
+import { getS3 } from './src/utils/s3';
 
 if (!process.env.API_KEY) throw '! process.env.API_KEY';
 
@@ -13,7 +14,9 @@ const CategoriesSchema = z.object({
 const CategoriesSchemaArr = z.array(CategoriesSchema);
 
 let saved = 0;
+let skipped = 0;
 const limitImages = pLimit(10);
+const s3 = getS3();
 
 const headersWithAuth = new Headers();
 headersWithAuth.append('Accept', 'application/json');
@@ -40,104 +43,83 @@ async function parseCategories(): Promise<z.infer<typeof CategoriesSchemaArr>> {
   }
 }
 
-async function prepareImages(args: {
-  catName: string;
-  hqPath: string;
-  smPath: string;
-  origBuffer: ArrayBuffer;
-}) {
-  try {
-    const image = new Bun.Image(args.origBuffer);
-
-    await image.resize(1200).webp({ quality: 70 }).write(args.hqPath);
-    await image.resize(700).webp({ quality: 70 }).write(args.smPath);
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : `!prepare photo for ${args.catName}`;
-
-    console.error(message + error);
-  }
-}
-
-async function saveGalleryOfCategory(cat: z.infer<typeof CategoriesSchema>) {
+async function saveGalleryToS3(cat: z.infer<typeof CategoriesSchema>) {
   const CATEGORY_NAME = cat.name.split('(')[0]?.trim();
   if (!CATEGORY_NAME) throw "Can't parse category name";
   const slug = slugify(CATEGORY_NAME);
 
-  const start = performance.now();
+  try {
+    const list = await s3.list({ prefix: `${slug}/` });
+    const existingKeys = (list.contents || []).map((item) => item.key);
+    const activeKeys = new Set<string>();
 
-  const CATEGORY_DIR = `${process.env.DIR_PUBLIC}/cats/${slug}/`;
-
-  await Bun.$`mkdir -p ${CATEGORY_DIR}`;
-
-  let existsCount = 0;
-  let savedCount = 0;
-
-  await Promise.all(
-    cat.images.map((src, index) =>
-      limitImages(async () => {
-        const controller = new AbortController();
-        const timer = setTimeout(
-          () => controller.abort(new Error('Full timeout')),
-          10_000,
-        );
-
+    const tasks = cat.images.map(async (src, ind) => {
+      return limitImages(async () => {
         try {
-          const ind = String(index + 1).padStart(3, '0');
-          const hash = Bun.hash(src);
-          const hqPath = `${CATEGORY_DIR}/${ind}-${hash}-hq.webp`;
-          const smPath = `${CATEGORY_DIR}/${ind}-${hash}-sm.webp`;
+          const hash = Bun.hash(src).toString().substring(10);
 
-          const hqFile = Bun.file(hqPath);
-          const smFile = Bun.file(smPath);
-          const exists = (await hqFile.exists()) && (await smFile.exists());
+          const hqName = `${slug}/${ind}-${hash}-hq.webp`;
+          const smName = `${slug}/${ind}-${hash}-sm.webp`;
+
+          activeKeys.add(hqName);
+          activeKeys.add(smName);
+
+          const exists =
+            existingKeys.includes(hqName) && existingKeys.includes(smName);
+
           if (!exists) {
-            const response = await fetch(src, {
-              headers: headersWithAuth,
-              signal: controller.signal,
-            });
+            const req = await fetch(src);
+            if (!req.ok) throw new Error(`Failed to fetch image: ${src}`);
 
-            if (!response.ok) throw new Error('!response.ok');
+            const buffer = await req.arrayBuffer();
+            const image = new Bun.Image(buffer);
 
-            const origBuffer = await response.arrayBuffer();
-            await prepareImages({
-              origBuffer,
-              hqPath,
-              smPath,
-              catName: cat.name,
-            });
-            savedCount++;
+            const hq = await image
+              .resize(1200)
+              .webp({ quality: 70 })
+              .toBuffer();
+            const sm = await image.resize(700).webp({ quality: 70 }).toBuffer();
+
+            await Promise.all([
+              s3.write(hqName, hq, { type: 'image/webp' }),
+              s3.write(smName, sm, { type: 'image/webp' }),
+            ]);
             saved++;
-          } else existsCount++;
+          } else skipped++;
         } catch (error) {
-          const message =
-            error instanceof Error
-              ? JSON.stringify(error.message)
-              : `Can't save photo for ${CATEGORY_NAME}`;
-
-          console.error(index, message);
-        } finally {
-          clearTimeout(timer);
+          console.error(error);
+          skipped++;
         }
-      }),
-    ),
-  );
+      });
+    });
 
-  const end = performance.now();
+    await Promise.allSettled(tasks);
 
-  const duration = ((end - start) / 1000).toFixed(2);
-  console.log(
-    CATEGORY_NAME,
-    `Saved`,
-    savedCount,
-    '/',
-    cat.images.length,
-    `(exists: ${existsCount})`,
-    `${duration} sec.`,
-  );
-  console.log('='.repeat(20) + '\n');
+    const keysToDelete = existingKeys.filter((key) => !activeKeys.has(key));
+
+    if (keysToDelete.length > 0) {
+      console.log(
+        `Deleting ${keysToDelete.length} obsolete files in ${CATEGORY_NAME}...`,
+      );
+      const deleteTasks = keysToDelete.map((key) =>
+        limitImages(() =>
+          s3.delete(key).catch((err) => {
+            console.error(`Failed to delete ${key}:`, err);
+          }),
+        ),
+      );
+      await Promise.all(deleteTasks);
+    }
+
+    console.log(CATEGORY_NAME, '| saved |', cat.images.length);
+  } catch (error) {
+    const message =
+      `${CATEGORY_NAME} | ` +
+      (error instanceof Error
+        ? JSON.stringify(error.message)
+        : '!unhandler error');
+    console.error(message, error);
+  }
 }
 
 export async function saveImagesFromAPI() {
@@ -145,15 +127,10 @@ export async function saveImagesFromAPI() {
 
   console.time('saveImagesFromAPI');
 
-  await Bun.write(
-    process.env.DIR_PUBLIC + '/cats.json',
-    JSON.stringify(cats, null, 2),
-  );
-
   await Promise.all(
     cats.map(async (cat) => {
       try {
-        await saveGalleryOfCategory(cat);
+        await saveGalleryToS3(cat);
       } catch (error) {
         const message =
           error instanceof Error ? JSON.stringify(error.message) : '!';
@@ -163,5 +140,7 @@ export async function saveImagesFromAPI() {
   );
 
   console.timeEnd('saveImagesFromAPI');
-  console.log('Saved', saved, 'of', cats.flatMap((cat) => cat.images).length);
+
+  console.log('\n\nSaved', saved);
+  console.log('Skipepd (exists)', skipped);
 }

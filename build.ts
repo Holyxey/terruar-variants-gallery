@@ -1,7 +1,5 @@
 const ETAG = JSON.stringify(Math.random().toString(36).substring(3));
-const API_PATH = process.env.DEV
-  ? process.env.API_PATH_LOCAL
-  : process.env.API_PATH;
+const API_PATH = process.env.API_PATH;
 
 async function buildServer() {
   await Bun.build({
@@ -11,7 +9,6 @@ async function buildServer() {
     banner: `// yurin.dev | ${ETAG}\n`,
     define: {
       'process.env.ETAG': ETAG,
-      'process.env.DIR_PUBLIC': JSON.stringify(process.env.DIR_PUBLIC),
       'process.env.API_PATH': JSON.stringify(API_PATH),
     },
     sourcemap: true,

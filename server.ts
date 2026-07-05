@@ -2,15 +2,16 @@ import Elysia, { t } from 'elysia';
 import cors from '@elysiajs/cors';
 import { RedisCache } from './src/utils/redisCache';
 import { saveImagesFromAPI } from './saveImagesFromAPI';
+import { getS3 } from './src/utils/s3';
 
 const ETAG = process.env.ETAG;
-
-const API_PATH = process.env.DEV
-  ? process.env.API_PATH_LOCAL
-  : process.env.API_PATH;
+const API_PATH = process.env.API_PATH;
+const s3 = getS3();
 
 if (!ETAG) throw '!ETAG';
 if (!API_PATH) throw '!API_PATH';
+
+await saveImagesFromAPI();
 
 const app = new Elysia({ prefix: '/gallery' })
   .use(cors())
@@ -80,21 +81,17 @@ const app = new Elysia({ prefix: '/gallery' })
 
         if (cache.value) return status(200, cache.value.arr);
 
-        const list = new Bun.Glob(
-          `${process.env.DIR_PUBLIC}/cats/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
-        );
-        const arr: string[] = [];
+        const list = await s3.list({ prefix: `${slug}/` });
+        const images = list.contents
+          ?.map((c) => `${process.env.S3_ENDPOINT}/variants/${c.key}`)
+          .filter((key) => (query.size ? key.includes(query.size) : key));
 
-        for await (const filePath of list.scan('.')) {
-          arr.push(`${API_PATH}/cats/${slug}/` + filePath.split('/').pop());
-        }
+        if (!images?.length) return status('Not Found');
 
-        if (!arr.length) return status('Not Found');
-
-        const sorted = arr.sort((a, b) => a.localeCompare(b));
+        const sorted = images.sort((a, b) => a.localeCompare(b));
         await cacheInstance.set({ arr: sorted });
 
-        return status(200, arr);
+        return status(200, sorted);
       } catch (error) {
         const message =
           error instanceof Error ? JSON.stringify(error.message) : '!';
@@ -108,29 +105,6 @@ const app = new Elysia({ prefix: '/gallery' })
         size: t.Optional(t.Union([t.Literal('hq'), t.Literal('sm')])),
       }),
     },
-  )
-
-  .get('/*', async ({ params, status }) => {
-    const path = params['*'];
-
-    try {
-      const file = Bun.file(process.env.DIR_PUBLIC + `/${path}`);
-
-      if (await file.exists()) {
-        return status(200, file);
-      } else {
-        return status('Not Found', 'Image is not found');
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '!';
-      console.error(message + error);
-
-      return status('Internal Server Error', message);
-    }
-  });
-
-app.onStart(async () => {
-  await saveImagesFromAPI();
-});
+  );
 
 app.listen(3000);

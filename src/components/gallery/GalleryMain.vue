@@ -41,10 +41,7 @@
   import GalleryFullScreen from './GalleryFullScreen.vue';
 
   type Prefix = 'hq' | 'sm';
-
-  const { variant } = defineProps<{
-    variant: Variant;
-  }>();
+  const { variant } = defineProps<{ variant: Variant }>();
 
   const list = ref<Record<Prefix, string[]>>({ hq: [], sm: [] });
   const prefix = ref<Prefix>(window.innerWidth > 460 ? 'hq' : 'sm');
@@ -56,17 +53,14 @@
 
   async function getImages() {
     prefix.value = window?.innerWidth > 460 ? 'hq' : 'sm';
+    const api = process.env.API_PATH;
+    if (!api) throw new Error('Not found API_PATH');
 
     if (sizedList.value.length === 0) {
       try {
-        const path =
-          process.env.API_PATH +
-          '/list/' +
-          variant.slug +
-          `?size=${prefix.value}`;
+        const path = `${api}/list/${variant.slug}?size=${prefix.value}`;
 
-        console.log(path);
-        const req = await fetch(path, { headers: {} });
+        const req = await fetch(path);
         const arr = await req.json();
 
         if (req.ok && Array.isArray(arr)) {
