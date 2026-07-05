@@ -58,8 +58,9 @@ async function saveGalleryToS3(cat: z.infer<typeof CategoriesSchema>) {
         try {
           const hash = Bun.hash(src).toString().substring(10);
 
-          const hqName = `${slug}/${ind}-${hash}-hq.webp`;
-          const smName = `${slug}/${ind}-${hash}-sm.webp`;
+          const index = ind.toString().padStart(3, '0');
+          const hqName = `${slug}/${index}-${hash}-hq.webp`;
+          const smName = `${slug}/${index}-${hash}-sm.webp`;
 
           activeKeys.add(hqName);
           activeKeys.add(smName);
