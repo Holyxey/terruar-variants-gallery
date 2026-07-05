@@ -110,9 +110,19 @@
     close();
   }
 
-  onMounted(() => {
-    const isQuery = new URL(location.href).searchParams.get('review');
+  function init() {
+    const params = new URL(location.href).searchParams;
+
+    const isQuery = params.get('review');
     if (isQuery) open();
+  }
+
+  onMounted(() => {
+    nextTick(() => {
+      if (document.readyState === 'complete') init();
+      else window.addEventListener('load', init);
+    });
   });
+
   onUnmounted(close);
 </script>
