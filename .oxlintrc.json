@@ -1,16 +1,12 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc", "vue"],
-  "categories": {
-    "correctness": "error"
-  },
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": { "correctness": "error" },
   "rules": {
-    "vue/require-typed-ref": "error",
-    "vue/define-props-declaration": "error",
-    "import/no-empty-named-blocks": "error",
     "typescript/consistent-type-assertions": [
       "error",
       { "assertionStyle": "never" }
     ]
-  }
+  },
+  "ignorePatterns": ["node_modules/**", "src/utils/pdfjs/**"]
 }

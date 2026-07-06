@@ -7,5 +7,6 @@
   "printWidth": 80,
   "arrowParens": "always",
   "sortTailwindcss": true,
-  "bracketSpacing": true
+  "bracketSpacing": true,
+  "ignorePatterns": ["node_modules/**"]
 }

@@ -48,10 +48,13 @@
     </ul>
 
     <!-- Tags -->
-    <ul class="flex flex-wrap gap-1 text-xs font-light select-none lg:text-sm">
+    <ul
+      class="flex flex-wrap gap-1 text-xs font-light lowercase select-none lg:text-sm"
+    >
       <li
         v-for="tag in variant.tags"
-        class="border-black-light flex items-center gap-2 rounded-full border px-3 py-2 whitespace-nowrap transition-colors ease-out hover:bg-white/5"
+        :title="typeof tag === 'string' ? tag : tag.title"
+        class="border-black-light flex items-center gap-2 rounded-full border px-3 py-2 whitespace-nowrap transition-colors ease-out hover:border-transparent hover:bg-white/5"
       >
         <template v-if="typeof tag === 'string'">
           <p>{{ tag }}</p>
@@ -61,7 +64,7 @@
           <div v-if="tag.iconLink">
             <img
               class="h-3 w-3"
-              :src="tag.iconLink"
+              :src="tag.iconLink + '?color=%23b05531&width=32'"
               :alt="`Terruar Icon ${variant.title} ${tag.title}`"
             />
           </div>
@@ -79,7 +82,12 @@
       </ul>
     </div>
 
-    <UiButton is="button" @click="bubbleBook"> Забронировать </UiButton>
+    <div class="flex flex-wrap gap-2" @click="$emit('closePopUp')">
+      <UiButton class="flex-1" is="button" v-if="isPopup"> Закрыть </UiButton>
+      <UiButton class="flex-1" is="button" @click="bubbleBook(variant.title)">
+        Забронировать
+      </UiButton>
+    </div>
   </div>
 </template>
 
@@ -88,83 +96,13 @@
   import IconPerson from '../icons/IconPerson.vue';
   import IconSquare from '../icons/IconSquare.vue';
   import IconBed from '../icons/IconBed.vue';
-  import type {
-    Accommodation,
-    WithContext,
-    LocationFeatureSpecificationLeaf,
-  } from 'schema-dts';
   import UiButton from '../ui/UiButton.vue';
-  import { clickBook } from '../../utils/clickBook';
+  import { bubbleBook } from '../../utils/bubbleBook.ts';
 
-  const { variant } = defineProps<{ variant: Variant }>();
+  const { variant } = defineProps<{
+    variant: Variant;
+    isPopup?: true;
+  }>();
 
-  function buildSchema() {
-    const SCHEMA: WithContext<Accommodation> = {
-      '@context': 'https://schema.org',
-      '@type': 'Accommodation',
-      name: variant.title,
-      description:
-        (variant.category === 'Палатки' ? 'Палатка' : 'Домик') +
-        ` в глэмпинге Терруар ${variant.title}` +
-        ` категории ${variant.category} на ${variant.capacity} гостей,` +
-        ` включающий: ${variant.tags.map((tag) => (typeof tag === 'string' ? tag : tag.title)).join(', ')}`,
-      occupancy: {
-        '@type': 'QuantitativeValue',
-        maxValue: variant.capacity,
-        unitCode: 'C62',
-      },
-      floorSize: {
-        '@type': 'QuantitativeValue',
-        value: variant.sqMeters,
-        unitCode: 'MTK',
-      },
-      amenityFeature: variant.tags.map(
-        (tag) =>
-          ({
-            '@type': 'LocationFeatureSpecification',
-            name: typeof tag === 'string' ? tag : tag.title,
-            value: true,
-          }) satisfies LocationFeatureSpecificationLeaf,
-      ),
-    };
-
-    try {
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.innerHTML = JSON.stringify(SCHEMA);
-
-      document.head.appendChild(script);
-      console.log(`Schema insserted to head for ${variant.title}`);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : `Can't build schema for ${variant.title}`;
-      console.error(message + error);
-    }
-  }
-  function bubbleBook() {
-    document.getElementById('bubbleBook')?.click();
-
-    const form: HTMLFormElement | null = document.querySelector(
-      '[data-book-form] form',
-    );
-
-    if (!form) return;
-
-    const existedInput: null | HTMLInputElement = form.querySelector(
-      '[name="Название домика"]',
-    );
-
-    const formVariantName = existedInput || document.createElement('input');
-    formVariantName.name = 'Название домика';
-    formVariantName.value = variant.title;
-    formVariantName.hidden = true;
-
-    if (!existedInput) form.appendChild(formVariantName);
-
-    clickBook(variant.title);
-  }
-
-  buildSchema();
+  defineEmits<{ closePopUp: [] }>();
 </script>

@@ -41,7 +41,6 @@
   import GalleryFullScreen from './GalleryFullScreen.vue';
 
   type Prefix = 'hq' | 'sm';
-
   const { variant } = defineProps<{ variant: Variant }>();
 
   const list = ref<Record<Prefix, string[]>>({ hq: [], sm: [] });
@@ -54,18 +53,21 @@
 
   async function getImages() {
     prefix.value = window?.innerWidth > 460 ? 'hq' : 'sm';
+    const api = process.env.API_PATH;
+    if (!api) throw new Error('Not found API_PATH');
 
     if (sizedList.value.length === 0) {
-      const path =
-        process.env.API_PATH +
-        '/list/' +
-        variant.slug +
-        `?size=${prefix.value}`;
-      const req = await fetch(path);
-      const arr = await req.json();
+      try {
+        const path = `${api}/list/${variant.slug}?size=${prefix.value}`;
 
-      if (req.ok && Array.isArray(arr)) {
-        list.value[prefix.value] = arr;
+        const req = await fetch(path);
+        const arr = await req.json();
+
+        if (req.ok && Array.isArray(arr)) {
+          list.value[prefix.value] = arr;
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
 
@@ -73,6 +75,9 @@
   }
 
   function buildSchema(list: string[]) {
+    const tag = 'data-schgal';
+    if (document.querySelector(`[${tag}=${variant.slug}]`)) return;
+
     const SCHEMA: WithContext<ImageGallery> = {
       '@context': 'https://schema.org',
       '@type': 'ImageGallery',
@@ -88,6 +93,7 @@
 
     const script = document.createElement('script');
     script.type = 'application/ld+json';
+    script.setAttribute(tag, variant.slug);
     script.innerHTML = JSON.stringify(SCHEMA);
     document.head.appendChild(script);
   }

@@ -1,5 +1,8 @@
 .env
 **/delme*
+parsedPhoto/
+docker-compose.override.yml
+.kilo/index
 
 # Logs
 logs

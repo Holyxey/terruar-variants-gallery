@@ -15,6 +15,22 @@
   --font-serif: 'Angst', 'Roboto', 'Arial', sans-serif;
 
   --ease-cubic: cubic-bezier(0.3, 1.7, 0.8, 1);
+
+  --spacing-safe-bottom: calc(
+    var(--spacing) + env(safe-area-inset-bottom, 0px)
+  );
+  --spacing-safe-top: calc(var(--spacing) + env(safe-area-inset-top, 0px));
+  --spacing-safe-left: calc(var(--spacing) + env(safe-area-inset-left, 0px));
+  --spacing-safe-right: calc(var(--spacing) + env(safe-area-inset-right, 0px));
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  @apply ease-cubic transition-all duration-500;
+}
+.modal-enter-from,
+.modal-leave-to {
+  @apply translate-y-2 opacity-0 blur-xs;
 }
 
 @utility no-scrollbar {

@@ -1,37 +1,41 @@
 import Elysia, { t } from 'elysia';
 import cors from '@elysiajs/cors';
 import { RedisCache } from './src/utils/redisCache';
+import { saveImagesFromAPI } from './saveImagesFromAPI';
+import { getS3 } from './src/utils/s3';
 
-const eTag = process.env.ETAG;
+const ETAG = process.env.ETAG;
+const API_PATH = process.env.API_PATH;
+const s3 = getS3();
 
-const PATH = process.env.DEV
-  ? 'http://localhost:3000/gallery'
-  : process.env.API_PATH;
+if (!ETAG) throw '!ETAG';
+if (!API_PATH) throw '!API_PATH';
 
-if (!eTag) throw '!eTag';
+await saveImagesFromAPI();
 
 const app = new Elysia({ prefix: '/gallery' })
-
   .use(cors())
   .all('/', ({ status }) => status(200, 'yurin.dev'))
+
+  // ===== ETAG & Cache Headers ===== //
+  .onBeforeHandle(({ set, headers, status }) => {
+    set.headers['etag'] = ETAG;
+    set.headers['cache-control'] = 'public, max-age=31536000, immutable';
+    set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
+
+    if (headers['if-none-match'] === ETAG) return status('Not Modified');
+  })
 
   .get('/vue', async ({ status, set, headers }) => {
     try {
       const file = Bun.file(
-        import.meta.dir + '/./terruar-variants-gallery.iife.js',
+        import.meta.dir + '/terruar-variants-gallery.iife.js',
       );
-
-      // ===== ETAG & Cache Headers
-      set.headers['etag'] = eTag;
-      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
-      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
-      if (headers['if-none-match'] === eTag) return status('Not Modified');
-      // ===== ETAG
 
       const canBeGzip = headers['accept-encoding']?.includes('gzip');
       const cacheInstance = new RedisCache(
         'gallerySlug',
-        'vue' + eTag,
+        'vue' + ETAG,
         t.Object({ plain: t.String() }),
       );
 
@@ -48,85 +52,59 @@ const app = new Elysia({ prefix: '/gallery' })
         return status(200, cache);
       }
 
+      if (!(await file.exists())) return status('Not Found');
+
       const plain = await file.text();
       await cacheInstance.set({ plain });
 
       if (canBeGzip) return status(200, Bun.gzipSync(plain));
       return status(200, plain);
     } catch (error) {
-      const message = error instanceof Error ? error.message : '!';
+      const message = error instanceof Error ? error.message : '/vue';
       console.error(message + error);
+
+      return status('Internal Server Error', message);
     }
   })
 
   .get(
     '/list/:slug',
-    async ({ status, set, headers, params: { slug }, query }) => {
-      const cacheKey = slug + query.size + eTag;
-      const cacheInstance = new RedisCache(
-        'gallerySlug',
-        cacheKey,
-        t.Object({ arr: t.Array(t.String()) }),
-      );
-      const cache = await cacheInstance.get();
-      if (cache.value) return status(200, cache.value.arr);
-
-      // ===== ETAG & Cache Headers
-      set.headers['etag'] = eTag;
-      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
-      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
-      if (headers['if-none-match'] === eTag) return status('Not Modified');
-      // ===== ETAG
-
-      const list = new Bun.Glob(
-        `${process.env.DIR_PUBLIC}/${slug}/*${query?.size ? `${query.size}.webp` : ''}`,
-      );
-      const arr: string[] = [];
-
-      for await (const filePath of list.scan('.')) {
-        arr.push(
-          `${PATH}/${slug}/` +
-            filePath.split('/')[filePath.split('/').length - 1],
+    async ({ status, params: { slug }, query }) => {
+      try {
+        const cacheKey = slug + query.size + ETAG;
+        const cacheInstance = new RedisCache(
+          'gallerySlug',
+          cacheKey,
+          t.Object({ arr: t.Array(t.String()) }),
         );
+        const cache = await cacheInstance.get();
+
+        if (cache.value) return status(200, cache.value.arr);
+
+        const list = await s3.list({ prefix: `${slug}/` });
+        const images = list.contents
+          ?.map((c) => `${process.env.S3_ENDPOINT}/variants/${c.key}`)
+          .filter((key) => (query.size ? key.includes(query.size) : key));
+
+        if (!images?.length) return status('Not Found');
+
+        const sorted = images.sort((a, b) => a.localeCompare(b));
+        await cacheInstance.set({ arr: sorted });
+
+        return status(200, sorted);
+      } catch (error) {
+        const message =
+          error instanceof Error ? JSON.stringify(error.message) : '!';
+        console.error(message, error);
+
+        return status('Internal Server Error', message);
       }
-
-      if (!arr.length) return status('Not Found');
-
-      const sorted = arr.sort((a, b) => a.localeCompare(b));
-      await cacheInstance.set({ arr: sorted });
-      return status(200, arr);
     },
     {
-      query: t.Optional(
-        t.Object({
-          size: t.Union([t.Literal('hq'), t.Literal('sm')]),
-        }),
-      ),
+      query: t.Object({
+        size: t.Optional(t.Union([t.Literal('hq'), t.Literal('sm')])),
+      }),
     },
-  )
-
-  .get('/*', async ({ set, headers, params, status }) => {
-    const path = params['*'];
-
-    try {
-      const file = Bun.file(import.meta.dir + `/./public/${path}`);
-
-      // ===== ETAG & Cache Headers
-      set.headers['etag'] = eTag;
-      set.headers['cache-control'] = 'public, max-age=31536000, immutable';
-      set.headers['expires'] = new Date(Date.now() + 31536000000).toUTCString();
-      if (headers['if-none-match'] === eTag) return status('Not Modified');
-      // ===== ETAG
-
-      if (await file.exists()) {
-        return status(200, file);
-      } else return status('Not Found', 'Image is not found');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '!';
-      console.error(message + error);
-
-      return status('Internal Server Error');
-    }
-  });
+  );
 
 app.listen(3000);

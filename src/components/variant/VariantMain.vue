@@ -1,9 +1,15 @@
 <template>
   <article
+    :data-variant-slug="variant.slug"
     :class="['rounded-3xl bg-black p-4', 'flex flex-col gap-4 md:flex-row']"
   >
-    <VariantInfo :variant :class="['flex-2']" />
-    <GalleryMain :variant :class="['flex-3']" />
+    <VariantInfo
+      :isPopup
+      :variant
+      :class="['flex-2']"
+      @close-pop-up="$emit('closePopUp')"
+    />
+    <GalleryMain :isPopup :variant :class="['flex-3']" />
   </article>
 </template>
 
@@ -12,5 +18,6 @@
   import VariantInfo from './VariantInfo.vue';
   import GalleryMain from '../gallery/GalleryMain.vue';
 
-  defineProps<{ variant: Variant }>();
+  defineProps<{ variant: Variant; isPopup?: true }>();
+  defineEmits<{ closePopUp: [] }>();
 </script>

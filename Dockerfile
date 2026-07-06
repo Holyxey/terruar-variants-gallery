@@ -1,4 +1,8 @@
-FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim AS builder
+FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim AS base
+
+
+
+FROM base AS builder
 
 WORKDIR /app
 
@@ -7,14 +11,15 @@ RUN bun i --frozen-lockfile
 
 COPY . .
 
-ARG API_PATH
-ARG DIR_PUBLIC
 ARG DEV
+ARG API_PATH
 
 RUN bun run lint
 RUN bun run build:app
 
-FROM dockerhub.timeweb.cloud/oven/bun:1.3-slim
+
+
+FROM base
 
 WORKDIR /app
 
@@ -22,4 +27,4 @@ COPY package.json ./
 
 COPY --from=builder /app/dist ./dist
 
-CMD ["bun", "run", "server:start"]
+CMD ["bun", "server:start"]
