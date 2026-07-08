@@ -135,7 +135,7 @@ const sharedTent = {
 const sharedCompany = {
   category: Category.Company,
   tags: [...sharedTags],
-  footer: ['Также можем поставить раскладушку'],
+  // footer: ['Также можем поставить раскладушку'],
 } satisfies Partial<Variant>;
 
 // Variants
@@ -186,6 +186,7 @@ const variantsElevated: Variant[] = [
       createTag('предметы гигиены'),
       createTag('кондиционер', 'snow'),
     ],
+    footer: undefined,
   }),
   createVariant('Мендоза', {
     ...sharedElevated,
