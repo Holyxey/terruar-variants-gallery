@@ -89,6 +89,14 @@
     isOpen.value = true;
     widgetsVisibility('hide');
     document.body.style.overflow = 'hidden';
+
+    try {
+      window.ym(87554982, 'reachGoal', 'review1');
+    } catch (error) {
+      const message =
+        error instanceof Error ? JSON.stringify(error.message) : '!';
+      console.error(message, error);
+    }
   }
   function close() {
     isOpen.value = false;
@@ -111,10 +119,15 @@
   }
 
   function init() {
-    const params = new URL(location.href).searchParams;
+    const url = new URL(location.href);
+    const params = url.searchParams;
 
-    const isQuery = params.get('review');
-    if (isQuery) open();
+    if (params.get('review')) {
+      open();
+      params.delete('review');
+
+      history.replaceState({}, '', url.pathname + '?' + params.toString());
+    }
   }
 
   onMounted(() => {
